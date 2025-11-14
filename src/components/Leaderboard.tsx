@@ -42,10 +42,10 @@ export default function Leaderboard({ gameId, gameName, isOpen, onClose }: Leade
         orderBy('score', 'desc'),
         limit(10)
       );
-
+      
       const querySnapshot = await getDocs(q);
       const leaderboardData: LeaderboardEntry[] = [];
-
+      
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         leaderboardData.push({
@@ -54,7 +54,7 @@ export default function Leaderboard({ gameId, gameName, isOpen, onClose }: Leade
           timestamp: data.createdAt?.toDate?.()?.toISOString()
         } as LeaderboardEntry);
       });
-
+      
       setEntries(leaderboardData);
     } catch (err) {
       console.error('Error loading leaderboard:', err);
