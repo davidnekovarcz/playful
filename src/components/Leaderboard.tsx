@@ -28,32 +28,35 @@ export default function Leaderboard({ gameName, isOpen, onClose }: LeaderboardPr
   const loadLeaderboard = useCallback(async () => {
     setLoading(true);
     setError('');
-    
+
+    // Convert game name to kebab-case for Firestore query
+    const gameNameKebab = gameName.toLowerCase().replace(/\s+/g, '-');
+
     try {
       // Import Firebase functions dynamically
       const { db } = await import('@/lib/firebase');
-      const { collection, query, where, orderBy, limit, getDocs } = await import('firebase/firestore');
-      
-      const leaderboardRef = collection(db, 'leaderboard');
+      const { collection, query, orderBy, limit, getDocs } = await import('firebase/firestore');
+
+      // Use nested collection structure: leaderboards/{gameId}/scores (same as getTopScores)
+      const leaderboardRef = collection(db, 'leaderboards', gameNameKebab, 'scores');
       const q = query(
         leaderboardRef,
-        where('gameName', '==', gameName),
         orderBy('score', 'desc'),
         limit(10)
       );
-      
+
       const querySnapshot = await getDocs(q);
       const leaderboardData: LeaderboardEntry[] = [];
-      
+
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         leaderboardData.push({
           id: doc.id,
           ...data,
-          timestamp: data.timestamp?.toDate?.()?.toISOString() || data.timestamp
+          timestamp: data.createdAt?.toDate?.()?.toISOString()
         } as LeaderboardEntry);
       });
-      
+
       setEntries(leaderboardData);
     } catch (err) {
       console.error('Error loading leaderboard:', err);
@@ -97,16 +100,13 @@ export default function Leaderboard({ gameName, isOpen, onClose }: LeaderboardPr
     }
   };
 
-  const formatDate = (timestamp: string) => {
-    try {
-      return new Date(timestamp).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-    } catch {
-      return 'Unknown';
-    }
+  const formatDate = (timestamp: string | undefined) => {
+    if (!timestamp) return 'Recent';
+    return new Date(timestamp).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
   };
 
   if (!isOpen) return null;
