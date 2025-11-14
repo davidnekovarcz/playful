@@ -227,6 +227,7 @@ export default function GameIframe({ game }: GameIframeProps) {
       <Leaderboard
         isOpen={showLeaderboard}
         onClose={() => setShowLeaderboard(false)}
+        gameId={game.id}
         gameName={game.name}
       />
     </div>

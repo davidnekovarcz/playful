@@ -15,12 +15,13 @@ interface LeaderboardEntry {
 }
 
 interface LeaderboardProps {
+  gameId: string;
   gameName: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function Leaderboard({ gameName, isOpen, onClose }: LeaderboardProps) {
+export default function Leaderboard({ gameId, gameName, isOpen, onClose }: LeaderboardProps) {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,16 +30,13 @@ export default function Leaderboard({ gameName, isOpen, onClose }: LeaderboardPr
     setLoading(true);
     setError('');
 
-    // Convert game name to kebab-case for Firestore query
-    const gameNameKebab = gameName.toLowerCase().replace(/\s+/g, '-');
-
     try {
       // Import Firebase functions dynamically
       const { db } = await import('@/lib/firebase');
       const { collection, query, orderBy, limit, getDocs } = await import('firebase/firestore');
 
       // Use nested collection structure: leaderboards/{gameId}/scores (same as getTopScores)
-      const leaderboardRef = collection(db, 'leaderboards', gameNameKebab, 'scores');
+      const leaderboardRef = collection(db, 'leaderboards', gameId, 'scores');
       const q = query(
         leaderboardRef,
         orderBy('score', 'desc'),
@@ -64,7 +62,7 @@ export default function Leaderboard({ gameName, isOpen, onClose }: LeaderboardPr
     } finally {
       setLoading(false);
     }
-  }, [gameName]);
+  }, [gameId]);
 
   useEffect(() => {
     if (isOpen) {
@@ -188,11 +186,6 @@ export default function Leaderboard({ gameName, isOpen, onClose }: LeaderboardPr
                     <div className="font-bold text-foreground">
                       {formatScore(entry)}
                     </div>
-                    {entry.email && (
-                      <div className="text-xs text-muted-foreground">
-                        Verified
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
