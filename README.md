@@ -203,7 +203,7 @@ No environment variables required for basic functionality. Add GA4/GTM tracking 
 ## 📞 Contact & Support
 
 - **Website**: [https://playful.smarlify.co](https://playful.smarlify.co)
-- **Email**: [nekovar.david@gmail.com](mailto:nekovar.david@gmail.com)
+- **GitHub**: [@davidnekovarcz](https://github.com/davidnekovarcz)
 - **Buy Me a Coffee**: Support game development
 
 ## 🎯 Roadmap

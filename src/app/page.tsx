@@ -216,7 +216,7 @@ export default function Home() {
                 Have an online game you&apos;d like to showcase? We&apos;d love to feature it on our platform!
               </p>
               <a
-                href="mailto:dave@smarlify.co?subject=Game Submission"
+                href="mailto:dave@smarlify.co?subject=Playful: Game Submission"
                 className="btn-gaming inline-flex items-center"
                 style={{
                   background: 'linear-gradient(135deg, #a855f7, #9333ea)',
@@ -342,7 +342,7 @@ export default function Home() {
                 Need a game built? We create amazing gaming experiences tailored to your needs.
               </p>
               <a
-                href="https://smarlify.co?utm_source=playful&utm_medium=referral&utm_campaign=hire_us"
+                href="https://cv.davidnekovar.cz/hire-me?role=game-developer&utm_source=playful&utm_medium=referral&utm_campaign=hire_us"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-gaming inline-flex items-center"
