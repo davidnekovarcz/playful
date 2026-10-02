@@ -4,10 +4,10 @@
  * Shared Firebase setup for all Playful games
  */
 
-import { initializeApp, getApp, getApps } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { getAnalytics, logEvent } from 'firebase/analytics';
+import { initializeApp, getApp, getApps, type FirebaseApp } from 'firebase/app';
+import { getAuth, signInAnonymously, onAuthStateChanged, type Auth } from 'firebase/auth';
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp, type Firestore } from 'firebase/firestore';
+import { getAnalytics, logEvent, type Analytics } from 'firebase/analytics';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -20,11 +20,21 @@ const firebaseConfig = {
   measurementId: "G-1JZRLPFQVT"
 };
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
+// Initialize the Firebase app on both server and client. Auth/Analytics use
+// browser APIs and must not run during SSR — that can hang Node on Heroku.
+const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+function getClientAuth(): Auth {
+  return getAuth(app);
+}
+
+export const auth: Auth = typeof window !== 'undefined'
+  ? getClientAuth()
+  : ({ currentUser: null } as Auth);
+
+export const db: Firestore = getFirestore(app);
+export const analytics: Analytics | null =
+  typeof window !== 'undefined' ? getAnalytics(app) : null;
 
 // Game statistics interface
 export interface GameStats {
