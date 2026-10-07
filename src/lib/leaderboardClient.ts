@@ -17,7 +17,7 @@ function getDb() {
   return db;
 }
 
-export type GameId = 'crossy-road' | 'traffic-run';
+export type GameId = 'crossy-road' | 'traffic-run' | 'marooned';
 
 export interface LeaderboardEntry {
   userId: string;

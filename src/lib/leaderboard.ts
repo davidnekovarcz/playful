@@ -7,6 +7,7 @@
 
 import { db } from './firebase';
 import { 
+  addDoc,
   collection, 
   doc, 
   setDoc, 
@@ -16,7 +17,8 @@ import {
   orderBy, 
   limit, 
   getDocs,
-  serverTimestamp 
+  serverTimestamp,
+  Timestamp,
 } from 'firebase/firestore';
 import { getCrossDomainUserId } from './firebase';
 
@@ -106,6 +108,16 @@ export async function submitToLeaderboard(
     // Add to leaderboard collection
     const leaderboardRef = collection(db, 'leaderboard');
     await setDoc(doc(leaderboardRef), leaderboardEntry);
+
+    // Card badge and in-game panel read leaderboards/{gameId}/scores.
+    if (gameName === 'Marooned') {
+      await addDoc(collection(db, 'leaderboards', 'marooned', 'scores'), {
+        name,
+        score,
+        gameName,
+        createdAt: Timestamp.now(),
+      });
+    }
 
     // Update personal record
     await updatePersonalRecord(gameName, score, level);

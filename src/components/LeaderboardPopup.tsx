@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Trophy, Star, Mail, User } from 'lucide-react';
+import { formatSurvivedMinutes } from '@/lib/survivedTime';
 
 interface LeaderboardPopupProps {
   isOpen: boolean;
@@ -94,12 +95,14 @@ export default function LeaderboardPopup({
             <div className="text-2xl font-bold text-foreground">
               {gameName === 'Space Shooter' ? `Level ${level}` : 
                gameName === 'Crossy Road' ? `Score: ${score}` :
-               gameName === 'Traffic Run' ? `Laps: ${score}` : score}
+               gameName === 'Traffic Run' ? `Laps: ${score}` :
+               gameName === 'Marooned' ? formatSurvivedMinutes(score) : score}
             </div>
             <p className="text-sm text-muted-foreground mt-1">
               {gameName === 'Space Shooter' ? 'Asteroids destroyed!' :
                gameName === 'Crossy Road' ? 'Rows crossed!' :
-               gameName === 'Traffic Run' ? 'Laps completed!' : 'Great score!'}
+               gameName === 'Traffic Run' ? 'Laps completed!' :
+               gameName === 'Marooned' ? 'Time survived' : 'Great score!'}
             </p>
           </div>
 

@@ -5,6 +5,7 @@ import { Gamepad2, Clock, Zap, Github, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import '@/lib/firebase'; // Initialize Firebase first
 import { getTopScores, type GameId } from '@/lib/leaderboardClient';
+import { formatSurvivedMinutes } from '@/lib/survivedTime';
 
 interface GameCardProps {
   game: Game;
@@ -23,7 +24,7 @@ export default function GameCard({ game, onClick }: GameCardProps) {
   const [isLoadingScore, setIsLoadingScore] = useState(false);
 
   // Check if this game should show top score instead of stars
-  const shouldShowTopScore = ['crossy-road', 'traffic-run'].includes(game.id);
+  const shouldShowTopScore = ['crossy-road', 'traffic-run', 'marooned'].includes(game.id);
 
   // Fetch top score from Firebase
   useEffect(() => {
@@ -151,7 +152,7 @@ export default function GameCard({ game, onClick }: GameCardProps) {
                 ) : topScore ? (
                   <div className="flex flex-row items-center gap-1 bg-yellow-400/20 text-yellow-400 text-xs font-medium px-2 py-1 rounded-full">
                       <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      {topScore.score} {topScore.playerName}
+                      {game.id === 'marooned' ? formatSurvivedMinutes(topScore.score) : topScore.score} {topScore.playerName}
                   </div>
                 ) : null}
               </div>
