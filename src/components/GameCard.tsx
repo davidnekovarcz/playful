@@ -18,6 +18,7 @@ interface TopScoreData {
 
 export default function GameCard({ game, onClick }: GameCardProps) {
   const isComingSoon = game.status === 'coming-soon';
+  const isEarlyAccess = game.status === 'early-access';
   const [topScore, setTopScore] = useState<TopScoreData | null>(null);
   const [isLoadingScore, setIsLoadingScore] = useState(false);
 
@@ -60,7 +61,6 @@ export default function GameCard({ game, onClick }: GameCardProps) {
   // Different divisors for each game
   const getDivisor = (gameId: string): number => {
     switch (gameId) {
-      case 'space-shooter': return 50;
       case 'traffic-run': return 15;
       default: return 10;
     }
@@ -99,6 +99,14 @@ export default function GameCard({ game, onClick }: GameCardProps) {
                 <Clock className="w-16 h-16 mx-auto mb-2 text-white/80" />
                 <p className="text-white font-semibold">Coming Soon</p>
               </div>
+            </div>
+          )}
+
+          {isEarlyAccess && (
+            <div className="absolute top-3 left-3">
+              <span className="bg-amber-400/90 text-black px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">
+                Early Access
+              </span>
             </div>
           )}
 
@@ -214,7 +222,7 @@ export default function GameCard({ game, onClick }: GameCardProps) {
               Coming Soon
             </button>
           ) : (
-            <div className="grid md:grid-cols-2 grid-cols-1 gap-5">
+            <div className={game.githubUrl ? 'grid md:grid-cols-2 grid-cols-1 gap-5' : 'grid grid-cols-1'}>
               <button
                 className="text-white md:p-4 p-3 rounded-lg font-semibold text-sm cursor-pointer bg-gray-500/20 border-none inline-flex items-center justify-center transition-all duration-300 hover:scale-105"
                 style={{
