@@ -1,7 +1,9 @@
-/** Island minutes from a Marooned GAME_OVER score, shown as "2h 15m". */
+/** Island minutes from a Marooned GAME_OVER score, shown as days and hours. */
 export function formatSurvivedMinutes(minutes: number): string {
   const total = Math.max(0, Math.floor(minutes));
-  const hours = Math.floor(total / 60);
-  const mins = total % 60;
-  return `${hours}h ${mins}m`;
+  const days = Math.floor(total / (24 * 60));
+  const hours = Math.floor((total % (24 * 60)) / 60);
+  if (days > 0 && hours > 0) return `${days}d ${hours}h`;
+  if (days > 0) return `${days}d`;
+  return `${hours}h`;
 }
