@@ -5,6 +5,7 @@ import { Gamepad2, Clock, Zap, Github, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import '@/lib/firebase'; // Initialize Firebase first
 import { getTopScores, type GameId } from '@/lib/leaderboardClient';
+import { fetchMaroonedRecord } from '@/lib/maroonedRecord';
 import { formatSurvivedMinutes } from '@/lib/survivedTime';
 
 interface GameCardProps {
@@ -26,25 +27,30 @@ export default function GameCard({ game, onClick }: GameCardProps) {
   // Check if this game should show top score instead of stars
   const shouldShowTopScore = ['crossy-road', 'traffic-run', 'marooned'].includes(game.id);
 
-  // Fetch top score from Firebase
+  // Fetch top score from Firebase. Marooned falls back to the island visits.
   useEffect(() => {
-    if (shouldShowTopScore && !isComingSoon) {
-      setIsLoadingScore(true);
-      getTopScores(game.id as GameId, 1)
-        .then((scores) => {
-          if (scores.length > 0) {
-            setTopScore({
-              playerName: scores[0].name,
-              score: scores[0].score
-            });
-          }
-          setIsLoadingScore(false);
-        })
-        .catch((error) => {
-          console.error('Error fetching top score:', error);
-          setIsLoadingScore(false);
-        });
-    }
+    if (!shouldShowTopScore || isComingSoon) return;
+    let cancelled = false;
+    setIsLoadingScore(true);
+    const board = getTopScores(game.id as GameId, 1).catch(() => []);
+    const island = game.id === 'marooned' ? fetchMaroonedRecord().catch(() => null) : Promise.resolve(null);
+    Promise.all([board, island])
+      .then(([scores, record]) => {
+        if (cancelled) return;
+        const rows: TopScoreData[] = [];
+        if (scores[0]) rows.push({ playerName: scores[0].name, score: scores[0].score });
+        if (record) rows.push({ playerName: record.name, score: record.score });
+        rows.sort((a, b) => b.score - a.score);
+        setTopScore(rows[0] ?? null);
+        setIsLoadingScore(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching top score:', error);
+        if (!cancelled) setIsLoadingScore(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [game.id, shouldShowTopScore, isComingSoon]);
 
   // Calculate stars dynamically based on project start date
