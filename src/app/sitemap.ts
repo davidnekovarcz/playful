@@ -6,7 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/cookies',
     '/games/traffic-run',
     '/games/crossy-road', 
-    '/games/space-shooter'
+    '/marooned'
   ];
 
   return SEOHelpers.generateSitemapUrls(PLAYFUL_SEO, additionalUrls);

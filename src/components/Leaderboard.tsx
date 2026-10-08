@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Trophy, Medal, Star, Users, Crown, X } from 'lucide-react';
+import { formatSurvivedMinutes } from '@/lib/survivedTime';
 
 interface LeaderboardEntry {
   id: string;
@@ -86,6 +87,9 @@ export default function Leaderboard({ gameId, gameName, isOpen, onClose }: Leade
   };
 
   const formatScore = (entry: LeaderboardEntry) => {
+    if (gameName === 'Marooned') {
+      return formatSurvivedMinutes(entry.score);
+    }
     switch (entry.gameName) {
       case 'Space Shooter':
         return `Level ${entry.level || entry.score}`;

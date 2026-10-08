@@ -8,7 +8,7 @@ import { games } from '@/data/games';
 
 export default function Home() {
   const router = useRouter();
-  const [featuredGame] = useState(games[0]); // Traffic Run as featured
+  const [featuredGame] = useState(games[0]);
   const [showCryptoPopup, setShowCryptoPopup] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -107,6 +107,11 @@ export default function Home() {
                     <div className="flex items-center gap-2 mb-2">
                       <Star className="w-5 h-5 text-accent" />
                       <span className="text-accent font-semibold">Featured Game</span>
+                      {featuredGame.status === 'early-access' && (
+                        <span className="bg-amber-400/90 text-black px-2 py-0.5 rounded-full text-xs font-semibold">
+                          Early Access
+                        </span>
+                      )}
                     </div>
                     <h2 className="text-3xl font-bold text-white mb-3">{featuredGame.name}</h2>
                     <p className="text-gaming mb-4">{featuredGame.description}</p>
@@ -130,7 +135,7 @@ export default function Home() {
               Choose Your <span className="text-gradient">Adventure</span>
             </h2>
             <p className="text-xl text-gaming max-w-2xl mx-auto">
-              From high-speed racing to endless running and dodging, discover our collection of premium games.
+              From island survival to high-speed racing and endless running, discover our collection of premium games.
             </p>
           </div>
           <div className="games-grid">

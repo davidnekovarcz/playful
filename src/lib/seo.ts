@@ -48,10 +48,10 @@ export interface SEOConfig {
 // Enhanced SEO configurations for each project
 export const SEO_CONFIGS: Record<string, SEOConfig> = {
   playful: {
-    title: "Playful by Smarlify - Free Online Games Hub | Traffic Run, Crossy Road, Space Shooter",
-    description: "Play amazing free browser games including Traffic Run, Crossy Road, and Space Shooter. Built with Three.js, WebGL, and Unity 3D. No downloads required - instant play in your browser. Perfect for casual gaming and entertainment.",
+    title: "Playful by Smarlify - Free Online Games Hub | Marooned, Traffic Run, Crossy Road",
+    description: "Play amazing free browser games including Marooned (Early Access island survivor multiplayer), Traffic Run, and Crossy Road. Built with Three.js, WebGL, and Unity 3D. No downloads required - instant play in your browser.",
     keywords: [
-      "free online games", "browser games", "web games", "Traffic Run game", "Crossy Road game", "Space Shooter game",
+      "free online games", "browser games", "web games", "Marooned game", "Island Survivor", "Traffic Run game", "Crossy Road game",
       "Three.js games", "WebGL games", "Unity 3D games", "instant play games", "casual games", "arcade games",
       "mobile games", "desktop games", "no download games", "playful games", "Smarlify games", "gaming hub",
       "interactive games", "JavaScript games", "HTML5 games", "canvas games", "game development showcase"
@@ -66,8 +66,8 @@ export const SEO_CONFIGS: Record<string, SEOConfig> = {
       site: "@smarlify",
       creator: "@smarlify"
     },
-    ogImage: "/game-assets/crossy-road.png",
-    twitterImage: "/game-assets/crossy-road.png",
+    ogImage: "/game-assets/marooned.png",
+    twitterImage: "/game-assets/marooned.png",
     googleVerification: "your-google-verification-code",
     hero: {
       headline: "Playful by Smarlify - Ultimate Gaming Hub",
