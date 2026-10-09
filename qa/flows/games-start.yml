@@ -1,0 +1,119 @@
+schema: qawalk.scenario.v1
+id: PLAYFUL-GAMES-START
+title: Games — hub iframes start
+kind: flow
+version: 1
+locales: [en]
+viewports:
+  desktop: [1280, 800]
+environments: [production]
+lanes: [Main path]
+readonly: true
+
+nodes:
+  - id: marooned
+    kind: screen
+    title: Marooned iframe starts
+    path: /marooned
+    purpose: The Marooned page shows the game name, the iframe loads the Heroku app, and the leaderboard shows an island survival time.
+    page: work
+    execution:
+      strategy: playwright
+      script: steps/games-start.mjs
+      instructions: Open Marooned, wait until the iframe leaves Loading, then open Leaderboard.
+    criteria:
+      - id: AC1
+        text: The page shows the game name.
+        check: { type: deterministic, assert: text_equals, selector: "h1", value: Marooned }
+      - id: AC2
+        text: The iframe title is Marooned.
+        check: { type: deterministic, assert: attr_equals, selector: "iframe", attr: title, value: Marooned }
+      - id: AC3
+        text: The iframe loads the Marooned Heroku app.
+        check:
+          type: deterministic
+          assert: attr_matches
+          selector: iframe
+          attr: src
+          pattern: "^https://marooned-island-e8bc6f06ff39\\.herokuapp\\.com/"
+      - id: AC4
+        text: Loading Marooned is gone.
+        check: { type: deterministic, assert: text_absent, pattern: "Loading Marooned\\.\\.\\." }
+      - id: AC5
+        text: Game Failed to Load stays absent.
+        check: { type: deterministic, assert: text_absent, pattern: "Game Failed to Load" }
+      - id: AC6
+        text: The leaderboard shows an island survival label (10h, 1d, or 1d 2h).
+        check:
+          type: deterministic
+          assert: text_matches
+          selector: ".font-bold"
+          pattern: "^(?:\\d+d(?: \\d+h)?|\\d+h)$"
+
+  - id: crossy-road
+    kind: screen
+    title: Crossy Road iframe starts
+    path: /crossy-road
+    purpose: The Crossy Road page shows the game name and the iframe loads the Heroku app.
+    page: work
+    execution:
+      strategy: playwright
+      script: steps/games-start.mjs
+      instructions: Open Crossy Road and wait until the iframe leaves Loading.
+    criteria:
+      - id: AC1
+        text: The page shows the game name.
+        check: { type: deterministic, assert: text_equals, selector: "h1", value: "Crossy Road" }
+      - id: AC2
+        text: The iframe title is Crossy Road.
+        check: { type: deterministic, assert: attr_equals, selector: "iframe", attr: title, value: "Crossy Road" }
+      - id: AC3
+        text: The iframe loads the Crossy Road Heroku app.
+        check:
+          type: deterministic
+          assert: attr_matches
+          selector: iframe
+          attr: src
+          pattern: "^https://crossy-road-adeb791dac1a\\.herokuapp\\.com/"
+      - id: AC4
+        text: Loading Crossy Road is gone.
+        check: { type: deterministic, assert: text_absent, pattern: "Loading Crossy Road\\.\\.\\." }
+      - id: AC5
+        text: Game Failed to Load stays absent.
+        check: { type: deterministic, assert: text_absent, pattern: "Game Failed to Load" }
+
+  - id: traffic-run
+    kind: screen
+    title: Traffic Run iframe starts
+    path: /traffic-run
+    purpose: The Traffic Run page shows the game name and the iframe loads the Heroku app.
+    page: work
+    execution:
+      strategy: playwright
+      script: steps/games-start.mjs
+      instructions: Open Traffic Run and wait until the iframe leaves Loading.
+    criteria:
+      - id: AC1
+        text: The page shows the game name.
+        check: { type: deterministic, assert: text_equals, selector: "h1", value: "Traffic Run" }
+      - id: AC2
+        text: The iframe title is Traffic Run.
+        check: { type: deterministic, assert: attr_equals, selector: "iframe", attr: title, value: "Traffic Run" }
+      - id: AC3
+        text: The iframe loads the Traffic Run Heroku app.
+        check:
+          type: deterministic
+          assert: attr_matches
+          selector: iframe
+          attr: src
+          pattern: "^https://traffic-run-50a7914ff3f5\\.herokuapp\\.com/"
+      - id: AC4
+        text: Loading Traffic Run is gone.
+        check: { type: deterministic, assert: text_absent, pattern: "Loading Traffic Run\\.\\.\\." }
+      - id: AC5
+        text: Game Failed to Load stays absent.
+        check: { type: deterministic, assert: text_absent, pattern: "Game Failed to Load" }
+
+edges:
+  - { from: marooned, to: crossy-road }
+  - { from: crossy-road, to: traffic-run }
