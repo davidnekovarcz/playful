@@ -1,0 +1,68 @@
+schema: qawalk.scenario.v1
+id: PLAYFUL-HUB-SCORES
+title: Hub — high scores on the game cards
+kind: flow
+version: 1
+locales: [en]
+viewports:
+  desktop: [1280, 800]
+environments: [local]
+lanes: [Main path]
+readonly: true
+
+nodes:
+  - id: hub
+    kind: screen
+    title: Game cards show high scores
+    path: /
+    purpose: The hub lists the live games, Marooned shows an island survival time and a name, and the other live cards finish loading.
+    page: landing
+    execution:
+      strategy: playwright
+      script: steps/hub-scores.mjs
+      instructions: Open the hub and wait until the live game cards leave Loading.
+    criteria:
+      - id: AC1
+        text: Marooned, Crossy Road, and Traffic Run cards are present.
+        check:
+          type: deterministic
+          assert: js_equals
+          expression: "document.body.innerText.includes('Marooned') && document.body.innerText.includes('Crossy Road') && document.body.innerText.includes('Traffic Run') && document.querySelector('h3').textContent.trim() === 'Marooned'"
+          value: true
+      - id: AC2
+        text: The Marooned card leaves Loading.
+        check:
+          type: deterministic
+          assert: js_equals
+          expression: "document.querySelector('h3').textContent.trim() === 'Marooned' && !document.querySelector('h3').parentElement.innerText.includes('Loading')"
+          value: true
+      - id: AC3
+        text: The Marooned card shows a survival label (10h, 1d, or 1d 2h) plus a name.
+        check:
+          type: deterministic
+          assert: text_matches
+          selector: ".game-card"
+          pattern: "(?:\\d+d(?: \\d+h)?|\\d+h) \\S"
+      - id: AC4
+        text: The Crossy Road card leaves Loading.
+        check:
+          type: deterministic
+          assert: js_equals
+          expression: "document.querySelectorAll('h3')[1].textContent.trim() === 'Crossy Road' && !document.querySelectorAll('h3')[1].parentElement.innerText.includes('Loading')"
+          value: true
+      - id: AC5
+        text: The Traffic Run card leaves Loading.
+        check:
+          type: deterministic
+          assert: js_equals
+          expression: "document.querySelectorAll('h3')[2].textContent.trim() === 'Traffic Run' && !document.querySelectorAll('h3')[2].parentElement.innerText.includes('Loading')"
+          value: true
+      - id: AC6
+        text: Crazy Vacuum stays coming soon.
+        check:
+          type: deterministic
+          assert: js_equals
+          expression: "document.querySelectorAll('h3')[3].textContent.trim() === 'Crazy Vacuum 3D' && document.querySelectorAll('h3')[3].closest('.game-card').innerText.includes('Coming Soon')"
+          value: true
+
+edges: []

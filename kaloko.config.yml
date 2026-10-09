@@ -1,0 +1,39 @@
+schema: qawalk.config.v1
+# Organization slug on kaloko.app
+org: plexima-io
+project: playful
+project_name: Playful
+
+# Where scenarios live
+scenarios:
+  - qa/flows/*.yml
+
+output: tmp/kaloko
+
+browser:
+  # Use an installed Chrome instead of downloading Playwright's Chromium
+  channel: chrome
+  port: 9333
+
+environments:
+  local:
+    # Next: npm run dev -- -p 3011 (leaves 3000 free)
+    base_url:
+      default: http://localhost:3011
+    readonly: true
+
+evaluators:
+  jev:
+    model: jev-1.13.0
+    api_key_env: TYPESAFE_API_KEY
+    thresholds: { pass: 0.85, fail: 0.15 }
+  vision:
+    model: claude-opus-5-5
+    api_key_env: ANTHROPIC_API_KEY
+    when: uncertain
+    max_calls: 40
+
+share:
+  url: https://kaloko.app
+  token_env: KALOKO_TOKEN
+  expires_days: 30

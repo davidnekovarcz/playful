@@ -13,7 +13,9 @@
     "start:next": "next start -H 0.0.0.0 -p ${PORT:-3000}",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "kaloko:doctor": "kaloko doctor",
+    "kaloko:smoke": "sh scripts/kaloko-smoke.sh"
   },
   "dependencies": {
     "@eslint/eslintrc": "^3",
@@ -37,6 +39,9 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5",
     "zustand": "^5.0.6"
+  },
+  "devDependencies": {
+    "kaloko": "^0.16.1"
   },
   "engines": {
     "node": "22.x"
