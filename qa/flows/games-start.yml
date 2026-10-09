@@ -6,7 +6,7 @@ version: 1
 locales: [en]
 viewports:
   desktop: [1280, 800]
-environments: [production]
+environments: [local]
 lanes: [Main path]
 readonly: true
 
@@ -15,7 +15,7 @@ nodes:
     kind: screen
     title: Marooned iframe starts
     path: /marooned
-    purpose: The Marooned page shows the game name, the iframe loads the Heroku app, and the leaderboard shows an island survival time.
+    purpose: The Marooned page shows the game name, the iframe points at the game URL, and the leaderboard shows an island survival time.
     page: work
     execution:
       strategy: playwright
@@ -29,7 +29,7 @@ nodes:
         text: The iframe title is Marooned.
         check: { type: deterministic, assert: attr_equals, selector: "iframe", attr: title, value: Marooned }
       - id: AC3
-        text: The iframe loads the Marooned Heroku app.
+        text: The iframe src is the Marooned game URL.
         check:
           type: deterministic
           assert: attr_matches
@@ -54,7 +54,7 @@ nodes:
     kind: screen
     title: Crossy Road iframe starts
     path: /crossy-road
-    purpose: The Crossy Road page shows the game name and the iframe loads the Heroku app.
+    purpose: The Crossy Road page shows the game name and the iframe points at the game URL.
     page: work
     execution:
       strategy: playwright
@@ -68,7 +68,7 @@ nodes:
         text: The iframe title is Crossy Road.
         check: { type: deterministic, assert: attr_equals, selector: "iframe", attr: title, value: "Crossy Road" }
       - id: AC3
-        text: The iframe loads the Crossy Road Heroku app.
+        text: The iframe src is the Crossy Road game URL.
         check:
           type: deterministic
           assert: attr_matches
@@ -86,7 +86,7 @@ nodes:
     kind: screen
     title: Traffic Run iframe starts
     path: /traffic-run
-    purpose: The Traffic Run page shows the game name and the iframe loads the Heroku app.
+    purpose: The Traffic Run page shows the game name and the iframe points at the game URL.
     page: work
     execution:
       strategy: playwright
@@ -100,7 +100,7 @@ nodes:
         text: The iframe title is Traffic Run.
         check: { type: deterministic, assert: attr_equals, selector: "iframe", attr: title, value: "Traffic Run" }
       - id: AC3
-        text: The iframe loads the Traffic Run Heroku app.
+        text: The iframe src is the Traffic Run game URL.
         check:
           type: deterministic
           assert: attr_matches

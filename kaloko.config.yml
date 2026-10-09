@@ -20,9 +20,6 @@ environments:
     # Next: npm run dev -- -p 3011 (leaves 3000 free)
     base_url:
       default: http://localhost:3011
-  production:
-    # production is always readonly: no data creation, no admin, no writes
-    base_url: https://playful.smarlify.co
     readonly: true
 
 evaluators:

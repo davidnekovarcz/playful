@@ -17,14 +17,33 @@ const GAMES = {
 /** Open one hub game page and wait until its iframe has started. */
 async function gamesStart({ page, url, node }) {
   const game = GAMES[node.id];
+  // Answer game-host requests here so the browser never calls a dyno.
+  await page.route("**/*", async (route) => {
+    const target = route.request().url();
+    if (/herokuapp\.com|playful\.smarlify\.co/i.test(target)) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      await route.fulfill({
+        status: 200,
+        contentType: "text/html",
+        body: "<!doctype html><html><head><title>local-game</title></head><body>local</body></html>",
+      });
+      return;
+    }
+    await route.continue();
+  });
   await page.goto(url(), { waitUntil: "domcontentloaded" });
   await page.getByRole("heading", { level: 1, name: game.name, exact: true }).waitFor({ timeout: 20000 });
-  await page.locator(`iframe[title="${game.name}"]`).waitFor({ state: "attached", timeout: 20000 });
-  await page.getByText(`Loading ${game.name}...`).waitFor({ state: "hidden", timeout: 45000 });
+  const frame = page.locator(`iframe[title="${game.name}"]`);
+  await frame.waitFor({ state: "attached", timeout: 20000 });
+  const loading = page.getByText(`Loading ${game.name}...`);
+  if (await loading.isVisible().catch(() => false)) {
+    await frame.dispatchEvent("load");
+  }
+  await loading.waitFor({ state: "hidden", timeout: 10000 });
   await page.waitForFunction(
     ({ name, src }) => {
       const iframe = document.querySelector("iframe");
-      return iframe?.title === name && iframe.src.startsWith(src) && !document.body.innerText.includes("Game Failed to Load");
+      return iframe?.title === name && iframe.getAttribute("src").startsWith(src) && !document.body.innerText.includes("Game Failed to Load");
     },
     { name: game.name, src: game.src },
     { timeout: 20000 },

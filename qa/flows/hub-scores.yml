@@ -6,7 +6,7 @@ version: 1
 locales: [en]
 viewports:
   desktop: [1280, 800]
-environments: [production]
+environments: [local]
 lanes: [Main path]
 readonly: true
 
