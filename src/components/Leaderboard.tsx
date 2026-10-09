@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Trophy, Medal, Star, Users, Crown, X } from 'lucide-react';
+import { fetchMaroonedRecord } from '@/lib/maroonedRecord';
 import { formatSurvivedMinutes } from '@/lib/survivedTime';
 
 interface LeaderboardEntry {
@@ -55,10 +56,40 @@ export default function Leaderboard({ gameId, gameName, isOpen, onClose }: Leade
           timestamp: data.createdAt?.toDate?.()?.toISOString()
         } as LeaderboardEntry);
       });
-      
-      setEntries(leaderboardData);
+
+      if (gameId === 'marooned') {
+        const island = await fetchMaroonedRecord();
+        if (island && !leaderboardData.some((entry) => entry.name === island.name && entry.score >= island.score)) {
+          leaderboardData.push({
+            id: 'marooned-island',
+            name: island.name,
+            score: island.score,
+            gameName: 'Marooned',
+            timestamp: '',
+            crossDomainUserId: '',
+          });
+          leaderboardData.sort((a, b) => b.score - a.score);
+        }
+      }
+
+      setEntries(leaderboardData.slice(0, 10));
     } catch (err) {
       console.error('Error loading leaderboard:', err);
+      if (gameId === 'marooned') {
+        const island = await fetchMaroonedRecord().catch(() => null);
+        if (island) {
+          setEntries([{
+            id: 'marooned-island',
+            name: island.name,
+            score: island.score,
+            gameName: 'Marooned',
+            timestamp: '',
+            crossDomainUserId: '',
+          }]);
+          setLoading(false);
+          return;
+        }
+      }
       setError('Failed to load leaderboard');
     } finally {
       setLoading(false);
