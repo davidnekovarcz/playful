@@ -16,6 +16,11 @@ browser:
   port: 9333
 
 environments:
+  preview:                                    # pull request previews (kaloko ci): the URL comes from CI
+    base_url: ${KALOKO_PREVIEW_URL}
+    # access:                                 # Vercel deployment protection: a bypass for automation
+    #   headers:
+    #     x-vercel-protection-bypass: { env: VERCEL_AUTOMATION_BYPASS_SECRET }
   local:
     # Next: npm run dev -- -p 3011 (leaves 3000 free)
     base_url:

@@ -8,13 +8,13 @@ export const games: Game[] = [
     shortDescription: 'Open-world Prague city sandbox',
     thumbnail: '/game-assets/gta-praha.png',
     url: 'https://gtapraha.online/',
-    status: 'published',
-    tech: ['Three.js', 'TypeScript', 'WebGL'],
-    features: ['Open World', 'City Driving', 'Scooter & Cars', 'Prague Map'],
+    status: 'early-access',
+    tech: ['Three.js', 'TypeScript', 'WebGL', '3D'],
+    features: ['Early Access', 'Multiplayer soon', 'Open World', 'City Driving'],
     color: 'from-orange-500 to-rose-600',
     gradient: 'bg-gradient-to-br from-orange-500 to-rose-600',
     publishedDate: '2026-10-13',
-    featuredOnly: true,
+    featured: true,
   },
   {
     id: 'marooned',
@@ -60,6 +60,7 @@ export const games: Game[] = [
     gradient: 'bg-gradient-to-br from-pink-500 to-rose-600',
     publishedDate: '2024-07-01'
   },
+  // Soft-hidden: keep data for a later return; omit from UI, sitemap, and SEO.
   {
     id: 'crazy-vacuum-3d',
     name: 'Crazy Vacuum 3D',
@@ -71,7 +72,8 @@ export const games: Game[] = [
     tech: ['Unity 3D', 'C#'],
     features: ['3D Graphics', 'Realistic Physics'],
     color: 'from-yellow-500 to-orange-600',
-    gradient: 'bg-gradient-to-br from-yellow-500 to-orange-600'
+    gradient: 'bg-gradient-to-br from-yellow-500 to-orange-600',
+    listed: false,
   }
 ];
 
@@ -79,18 +81,25 @@ export const getGameById = (id: string): Game | undefined => {
   return games.find(game => game.id === id);
 };
 
+/** Games shown in the hub UI and public discovery surfaces. */
+export const getListedGames = (): Game[] => {
+  return games.filter(game => game.listed !== false);
+};
+
 export const getPublishedGames = (): Game[] => {
-  return games.filter(game => game.status === 'published');
+  return getListedGames().filter(game => game.status === 'published');
 };
 
 export const getComingSoonGames = (): Game[] => {
-  return games.filter(game => game.status === 'coming-soon');
+  return getListedGames().filter(game => game.status === 'coming-soon');
 };
 
 export const getFeaturedGame = (): Game => {
-  return games.find(game => game.featuredOnly) ?? games[0];
+  const listed = getListedGames();
+  return listed.find(game => game.featured) ?? listed[0];
 };
 
+/** All listed games for the grid (featured games appear here too). */
 export const getGridGames = (): Game[] => {
-  return games.filter(game => !game.featuredOnly);
+  return getListedGames();
 };

@@ -4,12 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Gamepad2, Zap, Star, Trophy, Users, Copy, Check, BookOpen, GitPullRequest, Lightbulb, Plus, Briefcase } from 'lucide-react';
 import GameCard from '@/components/GameCard';
-import { games, getFeaturedGame, getGridGames } from '@/data/games';
+import { getFeaturedGame, getGridGames, getListedGames } from '@/data/games';
 
 export default function Home() {
   const router = useRouter();
   const [featuredGame] = useState(() => getFeaturedGame());
   const [gridGames] = useState(() => getGridGames());
+  const [listedCount] = useState(() => getListedGames().length);
   const [showCryptoPopup, setShowCryptoPopup] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -57,7 +58,7 @@ export default function Home() {
               </h1>
               <p className="text-xl md:text-2xl text-gaming max-w-3xl mx-auto mb-8">
                 Experience the ultimate gaming hub with cutting-edge games
-                built with Three.js, WebGL, Unity 3D and other.
+                built with Three.js, WebGL, and TypeScript.
               </p>
             </div>
 
@@ -65,7 +66,7 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-12">
               <div className="gaming-card p-6 text-center">
                 <Gamepad2 className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">{games.length}</div>
+                <div className="text-2xl font-bold text-white">{listedCount}</div>
                 <div className="text-sm text-muted-foreground">Games</div>
               </div>
               <div className="gaming-card p-6 text-center">
@@ -136,7 +137,7 @@ export default function Home() {
               Choose Your <span className="text-gradient">Adventure</span>
             </h2>
             <p className="text-xl text-gaming max-w-2xl mx-auto">
-              From island survival to high-speed racing and endless running, discover our collection of premium games.
+              From open-world Prague to island survival, high-speed racing, and endless running — discover our collection of premium games.
             </p>
           </div>
           <div className="games-grid">
