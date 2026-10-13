@@ -128,6 +128,8 @@ export default function Leaderboard({ gameId, gameName, isOpen, onClose }: Leade
         return `Score: ${entry.score}`;
       case 'Traffic Run':
         return `Laps: ${entry.score}`;
+      case 'GTA Praha':
+        return `Score: ${entry.score}`;
       default:
         return entry.score.toString();
     }

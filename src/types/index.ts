@@ -12,6 +12,8 @@ export interface Game {
   color: string;
   gradient: string;
   publishedDate?: string;
+  /** When true, show only in the featured hero — omit from the games grid. */
+  featuredOnly?: boolean;
 }
 
 export interface GameCardProps {

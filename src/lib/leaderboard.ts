@@ -110,8 +110,9 @@ export async function submitToLeaderboard(
     await setDoc(doc(leaderboardRef), leaderboardEntry);
 
     // Card badge and in-game panel read leaderboards/{gameId}/scores.
-    if (gameName === 'Marooned') {
-      await addDoc(collection(db, 'leaderboards', 'marooned', 'scores'), {
+    if (gameName === 'Marooned' || gameName === 'GTA Praha') {
+      const nestedGameId = gameName === 'Marooned' ? 'marooned' : 'gta-praha';
+      await addDoc(collection(db, 'leaderboards', nestedGameId, 'scores'), {
         name,
         score,
         gameName,
