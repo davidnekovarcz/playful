@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Gamepad2, Zap, Star, Trophy, Users, Copy, Check, BookOpen, GitPullRequest, Lightbulb, Plus, Briefcase } from 'lucide-react';
 import GameCard from '@/components/GameCard';
-import { getFeaturedGame, getGridGames } from '@/data/games';
+import { games, getFeaturedGame, getGridGames } from '@/data/games';
 
 export default function Home() {
   const router = useRouter();
-  const [featuredGame] = useState(getFeaturedGame);
-  const [gridGames] = useState(getGridGames);
+  const [featuredGame] = useState(() => getFeaturedGame());
+  const [gridGames] = useState(() => getGridGames());
   const [showCryptoPopup, setShowCryptoPopup] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -65,7 +65,7 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-12">
               <div className="gaming-card p-6 text-center">
                 <Gamepad2 className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-white">{1 + gridGames.length}</div>
+                <div className="text-2xl font-bold text-white">{games.length}</div>
                 <div className="text-sm text-muted-foreground">Games</div>
               </div>
               <div className="gaming-card p-6 text-center">
