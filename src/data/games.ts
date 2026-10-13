@@ -11,7 +11,7 @@ export const games: Game[] = [
     githubUrl: 'https://github.com/smarlify/gta-prague',
     status: 'early-access',
     tech: ['Three.js', 'TypeScript', 'WebGL', '3D'],
-    features: ['Early Access', 'Multiplayer soon', 'Open World', 'City Driving'],
+    features: ['Early Access', 'Real-Life City Simulator', 'Open World', 'City Driving'],
     color: 'from-orange-500 to-rose-600',
     gradient: 'bg-gradient-to-br from-orange-500 to-rose-600',
     publishedDate: '2026-10-13',

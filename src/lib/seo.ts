@@ -49,7 +49,7 @@ export interface SEOConfig {
 export const SEO_CONFIGS: Record<string, SEOConfig> = {
   playful: {
     title: "Playful by Smarlify - Free Online Games Hub | GTA Praha, Marooned, Traffic Run, Crossy Road",
-    description: "Play free browser games including GTA Praha (Early Access open-world Prague sandbox, Multiplayer soon), Marooned (island survivor multiplayer), Traffic Run, and Crossy Road. Built with Three.js, TypeScript, and WebGL. No downloads — instant play.",
+    description: "Play free browser games including GTA Praha (Early Access open-world Prague sandbox, real-life city simulator), Marooned (island survivor multiplayer), Traffic Run, and Crossy Road. Built with Three.js, TypeScript, and WebGL. No downloads — instant play.",
     keywords: [
       "free online games", "browser games", "web games", "GTA Praha", "GTA Praha Early Access", "Marooned game", "Island Survivor", "Traffic Run game", "Crossy Road game",
       "Three.js games", "WebGL games", "3D browser games", "instant play games", "casual games", "arcade games",
