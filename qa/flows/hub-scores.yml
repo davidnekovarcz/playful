@@ -6,7 +6,7 @@ version: 1
 locales: [en]
 viewports:
   desktop: [1280, 800]
-environments: [local]
+environments: [local, preview]
 lanes: [Main path]
 readonly: true
 
@@ -15,7 +15,7 @@ nodes:
     kind: screen
     title: Game cards show high scores
     path: /
-    purpose: The hub lists the live games, Marooned shows an island survival time and a name, and the other live cards finish loading.
+    purpose: The hub lists GTA Praha (featured and in the grid) plus Marooned, Crossy Road, and Traffic Run; live cards leave Loading; Crazy Vacuum stays hidden.
     page: landing
     execution:
       strategy: playwright
@@ -23,18 +23,18 @@ nodes:
       instructions: Open the hub and wait until the live game cards leave Loading.
     criteria:
       - id: AC1
-        text: Marooned, Crossy Road, and Traffic Run cards are present.
+        text: GTA Praha, Marooned, Crossy Road, and Traffic Run cards are present; Crazy Vacuum is absent.
         check:
           type: deterministic
           assert: js_equals
-          expression: "document.body.innerText.includes('Marooned') && document.body.innerText.includes('Crossy Road') && document.body.innerText.includes('Traffic Run') && document.querySelector('h3').textContent.trim() === 'Marooned'"
+          expression: "document.body.innerText.includes('GTA Praha') && document.body.innerText.includes('Marooned') && document.body.innerText.includes('Crossy Road') && document.body.innerText.includes('Traffic Run') && !document.body.innerText.includes('Crazy Vacuum') && document.querySelector('h3').textContent.trim() === 'GTA Praha'"
           value: true
       - id: AC2
-        text: The Marooned card leaves Loading.
+        text: The GTA Praha card leaves Loading.
         check:
           type: deterministic
           assert: js_equals
-          expression: "document.querySelector('h3').textContent.trim() === 'Marooned' && !document.querySelector('h3').parentElement.innerText.includes('Loading')"
+          expression: "document.querySelector('h3').textContent.trim() === 'GTA Praha' && !document.querySelector('h3').parentElement.innerText.includes('Loading')"
           value: true
       - id: AC3
         text: The Marooned card shows a survival label (10h, 1d, or 1d 2h) plus a name.
@@ -48,21 +48,21 @@ nodes:
         check:
           type: deterministic
           assert: js_equals
-          expression: "document.querySelectorAll('h3')[1].textContent.trim() === 'Crossy Road' && !document.querySelectorAll('h3')[1].parentElement.innerText.includes('Loading')"
+          expression: "(() => { const h = [...document.querySelectorAll('h3')].find(el => el.textContent.trim() === 'Crossy Road'); if (!h) return false; const card = h.closest('.game-card'); return card && !card.innerText.includes('Loading'); })()"
           value: true
       - id: AC5
         text: The Traffic Run card leaves Loading.
         check:
           type: deterministic
           assert: js_equals
-          expression: "document.querySelectorAll('h3')[2].textContent.trim() === 'Traffic Run' && !document.querySelectorAll('h3')[2].parentElement.innerText.includes('Loading')"
+          expression: "(() => { const h = [...document.querySelectorAll('h3')].find(el => el.textContent.trim() === 'Traffic Run'); if (!h) return false; const card = h.closest('.game-card'); return card && !card.innerText.includes('Loading'); })()"
           value: true
       - id: AC6
-        text: Crazy Vacuum stays coming soon.
+        text: Featured Game hero is GTA Praha.
         check:
           type: deterministic
           assert: js_equals
-          expression: "document.querySelectorAll('h3')[3].textContent.trim() === 'Crazy Vacuum 3D' && document.querySelectorAll('h3')[3].closest('.game-card').innerText.includes('Coming Soon')"
+          expression: "document.body.innerText.includes('Featured Game') && [...document.querySelectorAll('h2')].some(el => el.textContent.trim() === 'GTA Praha')"
           value: true
 
 edges: []

@@ -49,12 +49,12 @@ export interface SEOConfig {
 export const SEO_CONFIGS: Record<string, SEOConfig> = {
   playful: {
     title: "Playful by Smarlify - Free Online Games Hub | GTA Praha, Marooned, Traffic Run, Crossy Road",
-    description: "Play amazing free browser games including GTA Praha, Marooned (Early Access island survivor multiplayer), Traffic Run, and Crossy Road. Built with Three.js, WebGL, and Unity 3D. No downloads required - instant play in your browser.",
+    description: "Play free browser games including GTA Praha (Early Access open-world Prague sandbox, Multiplayer soon), Marooned (island survivor multiplayer), Traffic Run, and Crossy Road. Built with Three.js, TypeScript, and WebGL. No downloads — instant play.",
     keywords: [
-      "free online games", "browser games", "web games", "GTA Praha", "Marooned game", "Island Survivor", "Traffic Run game", "Crossy Road game",
-      "Three.js games", "WebGL games", "Unity 3D games", "instant play games", "casual games", "arcade games",
+      "free online games", "browser games", "web games", "GTA Praha", "GTA Praha Early Access", "Marooned game", "Island Survivor", "Traffic Run game", "Crossy Road game",
+      "Three.js games", "WebGL games", "3D browser games", "instant play games", "casual games", "arcade games",
       "mobile games", "desktop games", "no download games", "playful games", "Smarlify games", "gaming hub",
-      "interactive games", "JavaScript games", "HTML5 games", "canvas games", "game development showcase"
+      "interactive games", "JavaScript games", "HTML5 games", "open world Prague", "game development showcase"
     ],
     author: "Smarlify",
     creator: "Smarlify",
@@ -66,12 +66,12 @@ export const SEO_CONFIGS: Record<string, SEOConfig> = {
       site: "@smarlify",
       creator: "@smarlify"
     },
-    ogImage: "/game-assets/marooned.png",
-    twitterImage: "/game-assets/marooned.png",
+    ogImage: "/game-assets/gta-praha.png",
+    twitterImage: "/game-assets/gta-praha.png",
     googleVerification: "your-google-verification-code",
     hero: {
       headline: "Playful by Smarlify - Ultimate Gaming Hub",
-      subheadline: "Experience cutting-edge browser games built with Three.js, WebGL, and Unity 3D. Play instantly - no downloads required!",
+      subheadline: "Experience cutting-edge browser games built with Three.js, TypeScript, and WebGL. Play instantly - no downloads required!",
       cta: "Start Playing Now",
       badge: "🎮 Free Browser Games"
     },

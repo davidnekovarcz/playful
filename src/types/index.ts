@@ -12,8 +12,13 @@ export interface Game {
   color: string;
   gradient: string;
   publishedDate?: string;
-  /** When true, show only in the featured hero — omit from the games grid. */
-  featuredOnly?: boolean;
+  /** When true, show in the featured hero (may also appear in the grid). */
+  featured?: boolean;
+  /**
+   * When false, soft-hide: keep the entry in data, but omit from the UI grid,
+   * featured selection, sitemap, and public SEO. Defaults to true.
+   */
+  listed?: boolean;
 }
 
 export interface GameCardProps {

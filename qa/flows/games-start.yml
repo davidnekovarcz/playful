@@ -6,11 +6,46 @@ version: 1
 locales: [en]
 viewports:
   desktop: [1280, 800]
-environments: [local]
+environments: [local, preview]
 lanes: [Main path]
 readonly: true
 
 nodes:
+  - id: gta-praha
+    kind: screen
+    title: GTA Praha iframe starts
+    path: /gta-praha
+    purpose: The GTA Praha page shows the game name, the iframe points at the game URL, and the leaderboard opens so a high score can load.
+    page: work
+    execution:
+      strategy: playwright
+      script: steps/games-start.mjs
+      instructions: Open GTA Praha, wait until the iframe leaves Loading, then open Leaderboard.
+    criteria:
+      - id: AC1
+        text: The page shows the game name.
+        check: { type: deterministic, assert: text_equals, selector: "h1", value: "GTA Praha" }
+      - id: AC2
+        text: The iframe title is GTA Praha.
+        check: { type: deterministic, assert: attr_equals, selector: "iframe", attr: title, value: "GTA Praha" }
+      - id: AC3
+        text: The iframe src is the GTA Praha game URL.
+        check:
+          type: deterministic
+          assert: attr_matches
+          selector: iframe
+          attr: src
+          pattern: "^https://gtapraha\\.online/"
+      - id: AC4
+        text: Loading GTA Praha is gone.
+        check: { type: deterministic, assert: text_absent, pattern: "Loading GTA Praha\\.\\.\\." }
+      - id: AC5
+        text: Game Failed to Load stays absent.
+        check: { type: deterministic, assert: text_absent, pattern: "Game Failed to Load" }
+      - id: AC6
+        text: The GTA Praha leaderboard heading is visible after open.
+        check: { type: deterministic, assert: text_equals, selector: "h2", value: "GTA Praha Leaderboard" }
+
   - id: marooned
     kind: screen
     title: Marooned iframe starts
@@ -115,5 +150,6 @@ nodes:
         check: { type: deterministic, assert: text_absent, pattern: "Game Failed to Load" }
 
 edges:
+  - { from: gta-praha, to: marooned }
   - { from: marooned, to: crossy-road }
   - { from: crossy-road, to: traffic-run }

@@ -1,0 +1,50 @@
+# Kaloko: walk the scenarios this pull request affects on its preview deployment and comment on the PR.
+# Written by kaloko ci github. Secrets: KALOKO_TOKEN (tester role, upload scope; on Enterprise a service account's);
+# TYPESAFE_API_KEY only if semantic criteria should use your own evaluator key.
+name: Kaloko
+on:
+  # Vercel, Netlify and Cloudflare Pages report each preview as a GitHub deployment
+  deployment_status:
+  workflow_dispatch:
+concurrency:
+  group: kaloko-${{ github.event.deployment.sha || github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  deployments: read
+  pull-requests: write
+jobs:
+  walk:
+    if: github.event_name != 'deployment_status' || (github.event.deployment_status.state == 'success' && !startsWith(github.event.deployment_status.environment, 'Production') && !startsWith(github.event.deployment_status.environment, 'production'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      KALOKO_TOKEN: ${{ secrets.KALOKO_TOKEN }}
+      TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      KALOKO_AGENT: github-actions
+      KALOKO_BROWSER_CHANNEL: chromium
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha || github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0   # walk --affected compares with the pull request's base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx kaloko browser install --with-deps   # the Chromium of kaloko's own Playwright
+      - name: Preview deployment
+        # the deployment's URL, the pull request and its base; waits for the preview when it is still building
+        run: npx kaloko ci preview-url --wait 600 --github-env
+      - name: Walk, share, comment
+        run: |
+          status=0
+          npx kaloko ci plan --scenario qa/flows/games-start.yml,qa/flows/hub-scores.yml || echo "kaloko ci plan did not reach Kaloko; the GitHub check guesses from the changed files."
+          for s in qa/flows/games-start.yml qa/flows/hub-scores.yml; do
+            if ! npx kaloko affected --scenario "$s" --fail-if-none; then echo "Nothing in $s is affected; skipped."; continue; fi
+            npx kaloko start --scenario "$s" --env preview
+            npx kaloko walk --ephemeral --affected || status=1
+            npx kaloko share --pr || status=1
+          done
+          exit $status
