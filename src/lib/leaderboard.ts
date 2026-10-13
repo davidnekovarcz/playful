@@ -85,7 +85,8 @@ export async function submitToLeaderboard(
   score: number,
   level: number | undefined,
   name: string,
-  email?: string
+  email?: string,
+  uid?: string
 ): Promise<void> {
   try {
     const crossDomainUserId = getCrossDomainUserId();
@@ -112,12 +113,15 @@ export async function submitToLeaderboard(
     // Card badge and in-game panel read leaderboards/{gameId}/scores.
     if (gameName === 'Marooned' || gameName === 'GTA Praha') {
       const nestedGameId = gameName === 'Marooned' ? 'marooned' : 'gta-praha';
-      await addDoc(collection(db, 'leaderboards', nestedGameId, 'scores'), {
+      const nested: Record<string, unknown> = {
         name,
         score,
         gameName,
         createdAt: Timestamp.now(),
-      });
+      };
+      if (email) nested.email = email;
+      if (uid) nested.uid = uid;
+      await addDoc(collection(db, 'leaderboards', nestedGameId, 'scores'), nested);
     }
 
     // Update personal record

@@ -80,19 +80,24 @@ export default function GameIframe({ game }: GameIframeProps) {
     window.location.reload();
   };
 
-  const handleLeaderboardSubmit = async (data: { name: string; email?: string }) => {
+  const handleLeaderboardSubmit = async (data: {
+    name: string;
+    email?: string;
+    uid?: string;
+  }) => {
     if (!gameScore) return;
 
     // Update user profile
     await updateUserProfile(data.name, data.email);
 
-    // Submit to leaderboard
+    // Submit to leaderboard (Google display name + uid/email when signed in)
     await submitToLeaderboard(
       game.name,
       gameScore.score,
       gameScore.level,
       data.name,
-      data.email
+      data.email,
+      data.uid
     );
   };
 

@@ -4,7 +4,8 @@ const GAMES = {
     src: "https://gtapraha.online/",
     leaderboard: true,
     leaderboardHeading: "GTA Praha Leaderboard",
-    // Hub leaderboard may be empty; only wait for the panel, not a score row.
+    // Keep false until leaderboards/gta-praha/scores has live rows after high-score ship.
+    // Flip to true (and match km/m text) once scores exist in the preview env.
     requireScore: false,
   },
   marooned: {
