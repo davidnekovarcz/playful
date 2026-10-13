@@ -2,6 +2,21 @@ import { Game } from '@/types';
 
 export const games: Game[] = [
   {
+    id: 'gta-praha',
+    name: 'GTA Praha',
+    description: 'Cruise Prague streets on scooter or by car in this open-world city sandbox. Weave through traffic, explore the centre, and drive the low-poly capital at your own pace.',
+    shortDescription: 'Open-world Prague city sandbox',
+    thumbnail: '/game-assets/gta-praha.png',
+    url: 'https://gtapraha.online/',
+    status: 'published',
+    tech: ['Three.js', 'TypeScript', 'WebGL'],
+    features: ['Open World', 'City Driving', 'Scooter & Cars', 'Prague Map'],
+    color: 'from-orange-500 to-rose-600',
+    gradient: 'bg-gradient-to-br from-orange-500 to-rose-600',
+    publishedDate: '2026-10-13',
+    featuredOnly: true,
+  },
+  {
     id: 'marooned',
     name: 'Marooned',
     description: 'Island Survivor teaser — wash up with nothing, loot wrecks, manage hunger and thirst, and share the island with other players (no PvP). A multiplayer Early Access web build.',
@@ -70,4 +85,12 @@ export const getPublishedGames = (): Game[] => {
 
 export const getComingSoonGames = (): Game[] => {
   return games.filter(game => game.status === 'coming-soon');
+};
+
+export const getFeaturedGame = (): Game => {
+  return games.find(game => game.featuredOnly) ?? games[0];
+};
+
+export const getGridGames = (): Game[] => {
+  return games.filter(game => !game.featuredOnly);
 };
