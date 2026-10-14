@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Trophy, Medal, Star, Users, Crown, X } from 'lucide-react';
 import { fetchMaroonedRecord } from '@/lib/maroonedRecord';
 import { formatSurvivedMinutes } from '@/lib/survivedTime';
+import { formatGtaDistance } from '@/lib/gtaDistance';
 
 interface LeaderboardEntry {
   id: string;
@@ -121,6 +122,9 @@ export default function Leaderboard({ gameId, gameName, isOpen, onClose }: Leade
     if (gameName === 'Marooned') {
       return formatSurvivedMinutes(entry.score);
     }
+    if (gameName === 'GTA Praha') {
+      return formatGtaDistance(entry.score);
+    }
     switch (entry.gameName) {
       case 'Space Shooter':
         return `Level ${entry.level || entry.score}`;
@@ -129,7 +133,7 @@ export default function Leaderboard({ gameId, gameName, isOpen, onClose }: Leade
       case 'Traffic Run':
         return `Laps: ${entry.score}`;
       case 'GTA Praha':
-        return `Score: ${entry.score}`;
+        return formatGtaDistance(entry.score);
       default:
         return entry.score.toString();
     }

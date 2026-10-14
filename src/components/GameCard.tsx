@@ -7,6 +7,7 @@ import '@/lib/firebase'; // Initialize Firebase first
 import { getTopScores, type GameId } from '@/lib/leaderboardClient';
 import { fetchMaroonedRecord } from '@/lib/maroonedRecord';
 import { formatSurvivedMinutes } from '@/lib/survivedTime';
+import { formatGtaDistance } from '@/lib/gtaDistance';
 
 interface GameCardProps {
   game: Game;
@@ -158,7 +159,12 @@ export default function GameCard({ game, onClick }: GameCardProps) {
                 ) : topScore ? (
                   <div className="flex flex-row items-center gap-1 bg-yellow-400/20 text-yellow-400 text-xs font-medium px-2 py-1 rounded-full">
                       <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      {game.id === 'marooned' ? formatSurvivedMinutes(topScore.score) : topScore.score} {topScore.playerName}
+                      {game.id === 'marooned'
+                        ? formatSurvivedMinutes(topScore.score)
+                        : game.id === 'gta-praha'
+                          ? formatGtaDistance(topScore.score)
+                          : topScore.score}{' '}
+                      {topScore.playerName}
                   </div>
                 ) : null}
               </div>
@@ -201,7 +207,7 @@ export default function GameCard({ game, onClick }: GameCardProps) {
             {game.features.slice(0, 3).map((feature, index) => (
               <span
                 key={index}
-                className="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-medium"
+                className="bg-white/10 text-white/80 px-2 py-1 rounded-md text-xs font-medium backdrop-blur-sm"
               >
                 {feature}
               </span>
