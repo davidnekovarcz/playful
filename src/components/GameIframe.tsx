@@ -234,7 +234,7 @@ export default function GameIframe({ game }: GameIframeProps) {
           title={game.name}
           onLoad={handleLoad}
           onError={handleError}
-          allow="fullscreen; gamepad; microphone; camera"
+          allow="fullscreen; gamepad; microphone; camera; accelerometer; gyroscope"
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"
         />
       </div>
