@@ -21,6 +21,10 @@ environments:
     base_url:
       default: http://localhost:3011
     readonly: true
+  production:
+    # The Heroku app behind playful.smarlify.co. Readonly: the hub walk does not submit a score.
+    base_url: https://playful.smarlify.co
+    readonly: true
 
 evaluators:
   jev:
