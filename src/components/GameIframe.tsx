@@ -38,26 +38,49 @@ export default function GameIframe({ game }: GameIframeProps) {
 
   // Listen for game events from iframe
   useEffect(() => {
-    const handleMessage = async (event: MessageEvent) => {
-      // Only accept messages from the game's origin
-      if (event.origin !== new URL(game.url).origin) return;
+    const primaryOrigin = new URL(game.url).origin;
 
-      if (event.data.type === 'GAME_OVER' && event.data.score !== undefined) {
-        const { score, level } = event.data;
-        
-        // Check if this is a personal record
-        const isRecord = await isPersonalRecord(game.name, score);
-        
-        if (isRecord) {
-          setGameScore({ score, level });
-          setShowLeaderboardPopup(true);
-        }
+    const isAllowedOrigin = (origin: string) => {
+      if (origin === primaryOrigin) return true;
+      // GTA Praha is listed as gtapraha.online but the same build also serves from Heroku.
+      if (game.id !== 'gta-praha') return false;
+      try {
+        const host = new URL(origin).hostname;
+        return (
+          host === 'gtapraha.online' ||
+          host === 'www.gtapraha.online' ||
+          (host.endsWith('.herokuapp.com') && host.includes('gta-prague'))
+        );
+      } catch {
+        return false;
       }
+    };
+
+    const handleMessage = async (event: MessageEvent) => {
+      if (!isAllowedOrigin(event.origin)) return;
+
+      const data = event.data;
+      if (!data || typeof data !== 'object' || data.type !== 'GAME_OVER') return;
+      if (typeof data.score !== 'number' || !Number.isFinite(data.score)) return;
+
+      const score = data.score;
+      const level = typeof data.level === 'number' ? data.level : undefined;
+
+      // Always offer the claim UI for a positive GTA run. The game hides in-iframe
+      // Google when embedded and tells players to sign in on Playful — gating only on
+      // personal-record left them with no Gmail path when the check failed or was not a PR.
+      if (score <= 0) return;
+
+      const isRecord = await isPersonalRecord(game.name, score).catch(() => true);
+      if (!isRecord && game.id !== 'gta-praha') return;
+
+      setGameScore({ score, level });
+      setShowLeaderboardPopup(true);
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
-  }, [game.name, game.url]);
+  }, [game.id, game.name, game.url]);
 
   const handleBack = () => {
     router.push('/');
@@ -212,7 +235,7 @@ export default function GameIframe({ game }: GameIframeProps) {
           onLoad={handleLoad}
           onError={handleError}
           allow="fullscreen; gamepad; microphone; camera"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-presentation"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"
         />
       </div>
 

@@ -73,7 +73,8 @@ export async function isPersonalRecord(
     return score > gameRecord.score;
   } catch (error) {
     console.error('Error checking personal record:', error);
-    return false;
+    // Fail open so a Firestore blip does not hide the claim / Google UI.
+    return true;
   }
 }
 
