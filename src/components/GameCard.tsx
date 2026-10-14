@@ -207,7 +207,7 @@ export default function GameCard({ game, onClick }: GameCardProps) {
             {game.features.slice(0, 3).map((feature, index) => (
               <span
                 key={index}
-                className="bg-primary/20 text-primary px-2 py-1 rounded text-xs font-medium"
+                className="bg-white/10 text-white/80 px-2 py-1 rounded-md text-xs font-medium backdrop-blur-sm"
               >
                 {feature}
               </span>

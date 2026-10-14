@@ -11,7 +11,7 @@ export const games: Game[] = [
     githubUrl: 'https://github.com/smarlify/gta-prague',
     status: 'early-access',
     tech: ['Three.js', 'TypeScript', 'WebGL', '3D'],
-    features: ['Early Access', 'Real-Life City Simulator', 'Open World', 'City Driving'],
+    features: ['Real-Life City Simulator', 'Open-World', 'Multiplayer'],
     color: 'from-orange-500 to-rose-600',
     gradient: 'bg-gradient-to-br from-orange-500 to-rose-600',
     publishedDate: '2026-10-13',
@@ -27,7 +27,7 @@ export const games: Game[] = [
     githubUrl: 'https://github.com/davidnekovarcz/marooned',
     status: 'early-access',
     tech: ['Three.js', 'Vue', 'TypeScript', 'Firebase'],
-    features: ['Early Access', 'Multiplayer', 'Shared Island', 'Survival'],
+    features: ['Survival Simulator', 'Shared Island', 'Multiplayer'],
     color: 'from-teal-500 to-amber-500',
     gradient: 'bg-gradient-to-br from-teal-500 to-amber-500',
     publishedDate: '2026-10-07'
