@@ -110,10 +110,10 @@ export default function GameIframe({ game }: GameIframeProps) {
   }) => {
     if (!gameScore) return;
 
-    // Update user profile
+    // Profile is best-effort (rules may deny); score write must still succeed.
     await updateUserProfile(data.name, data.email);
 
-    // Submit to leaderboard (Google display name + uid/email when signed in)
+    // Nested leaderboards/{gameId}/scores for GTA / Marooned (same as Crossy/Traffic)
     await submitToLeaderboard(
       game.name,
       gameScore.score,

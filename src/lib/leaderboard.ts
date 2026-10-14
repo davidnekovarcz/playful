@@ -79,6 +79,17 @@ export async function isPersonalRecord(
 }
 
 /**
+ * Nested game ids that write to leaderboards/{gameId}/scores (same path Crossy/Traffic use).
+ * Firestore rules allow creates there; the legacy flat `leaderboard` and `userProfiles`
+ * collections are permission-denied for client writes.
+ */
+function nestedLeaderboardGameId(gameName: string): 'marooned' | 'gta-praha' | null {
+  if (gameName === 'Marooned') return 'marooned';
+  if (gameName === 'GTA Praha') return 'gta-praha';
+  return null;
+}
+
+/**
  * Submit a score to the leaderboard
  */
 export async function submitToLeaderboard(
@@ -95,25 +106,11 @@ export async function submitToLeaderboard(
       throw new Error('No cross-domain user ID available');
     }
 
-    // Create leaderboard entry
-    const leaderboardEntry: Omit<LeaderboardEntry, 'id'> = {
-      name,
-      email,
-      score,
-      level,
-      gameName,
-      timestamp: serverTimestamp(),
-      crossDomainUserId,
-      isPersonalRecord: true
-    };
-
-    // Add to leaderboard collection
-    const leaderboardRef = collection(db, 'leaderboard');
-    await setDoc(doc(leaderboardRef), leaderboardEntry);
+    const nestedGameId = nestedLeaderboardGameId(gameName);
 
     // Card badge and in-game panel read leaderboards/{gameId}/scores.
-    if (gameName === 'Marooned' || gameName === 'GTA Praha') {
-      const nestedGameId = gameName === 'Marooned' ? 'marooned' : 'gta-praha';
+    // Prefer this path: live rules allow it (verified for gta-praha / marooned / crossy-road).
+    if (nestedGameId) {
       const nested: Record<string, unknown> = {
         name,
         score,
@@ -123,12 +120,25 @@ export async function submitToLeaderboard(
       if (email) nested.email = email;
       if (uid) nested.uid = uid;
       await addDoc(collection(db, 'leaderboards', nestedGameId, 'scores'), nested);
+      console.log('Score submitted to leaderboards/%s/scores:', nestedGameId, nested);
+    } else {
+      // Legacy flat collection — omit undefined (Firestore rejects them).
+      const leaderboardEntry: Record<string, unknown> = {
+        name,
+        score,
+        gameName,
+        timestamp: serverTimestamp(),
+        crossDomainUserId,
+        isPersonalRecord: true,
+      };
+      if (email) leaderboardEntry.email = email;
+      if (level !== undefined) leaderboardEntry.level = level;
+      await setDoc(doc(collection(db, 'leaderboard')), leaderboardEntry);
+      console.log('Score submitted to leaderboard:', leaderboardEntry);
     }
 
-    // Update personal record
+    // Best-effort: rules currently deny client writes to personalRecords.
     await updatePersonalRecord(gameName, score, level);
-
-    console.log('Score submitted to leaderboard:', leaderboardEntry);
   } catch (error) {
     console.error('Error submitting to leaderboard:', error);
     throw error;
@@ -247,13 +257,16 @@ export async function hasUserName(): Promise<boolean> {
 }
 
 /**
- * Update user profile with name and email
+ * Update user profile with name and email.
+ * Best-effort only: live Firestore rules deny client writes to userProfiles, and a
+ * failed profile update must not block leaderboard score submission.
  */
 export async function updateUserProfile(name: string, email?: string): Promise<void> {
   try {
     const crossDomainUserId = getCrossDomainUserId();
     if (!crossDomainUserId) {
-      throw new Error('No cross-domain user ID available');
+      console.warn('No cross-domain user ID available; skipping profile update');
+      return;
     }
 
     const userProfileRef = doc(db, 'userProfiles', crossDomainUserId);
@@ -267,7 +280,6 @@ export async function updateUserProfile(name: string, email?: string): Promise<v
     await setDoc(userProfileRef, userProfile, { merge: true });
     console.log('User profile updated:', userProfile);
   } catch (error) {
-    console.error('Error updating user profile:', error);
-    throw error;
+    console.warn('Error updating user profile (non-blocking):', error);
   }
 }
