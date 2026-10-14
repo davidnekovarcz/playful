@@ -52,17 +52,17 @@ export default function NotFound() {
               Available Games
             </h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <Link href="/traffic-run" className="text-primary hover:text-primary/80 transition-colors">
-                Traffic Run
-              </Link>
-              <Link href="/crossy-road" className="text-secondary hover:text-secondary/80 transition-colors">
-                Crossy Road
+              <Link href="/gta-praha" className="text-primary hover:text-primary/80 transition-colors">
+                GTA Praha
               </Link>
               <Link href="/marooned" className="text-accent hover:text-accent/80 transition-colors">
                 Marooned
               </Link>
-              <Link href="/crazy-vacuum-3d" className="text-muted-foreground hover:text-white transition-colors">
-                Crazy Vacuum 3D
+              <Link href="/crossy-road" className="text-secondary hover:text-secondary/80 transition-colors">
+                Crossy Road
+              </Link>
+              <Link href="/traffic-run" className="text-primary hover:text-primary/80 transition-colors">
+                Traffic Run
               </Link>
             </div>
           </div>

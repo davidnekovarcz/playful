@@ -25,7 +25,7 @@ export default function GameCard({ game, onClick }: GameCardProps) {
   const [isLoadingScore, setIsLoadingScore] = useState(false);
 
   // Check if this game should show top score instead of stars
-  const shouldShowTopScore = ['crossy-road', 'traffic-run', 'marooned'].includes(game.id);
+  const shouldShowTopScore = ['crossy-road', 'traffic-run', 'marooned', 'gta-praha'].includes(game.id);
 
   // Fetch top score from Firebase. Marooned falls back to the island visits.
   useEffect(() => {

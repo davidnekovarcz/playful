@@ -2,12 +2,29 @@ import { Game } from '@/types';
 
 export const games: Game[] = [
   {
+    id: 'gta-praha',
+    name: 'GTA Praha',
+    description: 'Cruise Prague streets on scooter or by car in this open-world city sandbox. Weave through traffic, explore the centre, and drive the low-poly capital at your own pace.',
+    shortDescription: 'Open-world Prague city sandbox',
+    thumbnail: '/game-assets/gta-praha.png',
+    url: 'https://gtapraha.online/',
+    githubUrl: 'https://github.com/smarlify/gta-prague',
+    status: 'early-access',
+    tech: ['Three.js', 'TypeScript', 'WebGL', '3D'],
+    features: ['Early Access', 'Real-Life City Simulator', 'Open World', 'City Driving'],
+    color: 'from-orange-500 to-rose-600',
+    gradient: 'bg-gradient-to-br from-orange-500 to-rose-600',
+    publishedDate: '2026-10-13',
+    featured: true,
+  },
+  {
     id: 'marooned',
     name: 'Marooned',
     description: 'Island Survivor teaser — wash up with nothing, loot wrecks, manage hunger and thirst, and share the island with other players (no PvP). A multiplayer Early Access web build.',
     shortDescription: 'Early Access island survivor with a shared-island multiplayer experience',
     thumbnail: '/game-assets/marooned.png',
     url: 'https://marooned-island-e8bc6f06ff39.herokuapp.com/',
+    githubUrl: 'https://github.com/davidnekovarcz/marooned',
     status: 'early-access',
     tech: ['Three.js', 'Vue', 'TypeScript', 'Firebase'],
     features: ['Early Access', 'Multiplayer', 'Shared Island', 'Survival'],
@@ -45,6 +62,7 @@ export const games: Game[] = [
     gradient: 'bg-gradient-to-br from-pink-500 to-rose-600',
     publishedDate: '2024-07-01'
   },
+  // Soft-hidden: keep data for a later return; omit from UI, sitemap, and SEO.
   {
     id: 'crazy-vacuum-3d',
     name: 'Crazy Vacuum 3D',
@@ -56,7 +74,8 @@ export const games: Game[] = [
     tech: ['Unity 3D', 'C#'],
     features: ['3D Graphics', 'Realistic Physics'],
     color: 'from-yellow-500 to-orange-600',
-    gradient: 'bg-gradient-to-br from-yellow-500 to-orange-600'
+    gradient: 'bg-gradient-to-br from-yellow-500 to-orange-600',
+    listed: false,
   }
 ];
 
@@ -64,10 +83,25 @@ export const getGameById = (id: string): Game | undefined => {
   return games.find(game => game.id === id);
 };
 
+/** Games shown in the hub UI and public discovery surfaces. */
+export const getListedGames = (): Game[] => {
+  return games.filter(game => game.listed !== false);
+};
+
 export const getPublishedGames = (): Game[] => {
-  return games.filter(game => game.status === 'published');
+  return getListedGames().filter(game => game.status === 'published');
 };
 
 export const getComingSoonGames = (): Game[] => {
-  return games.filter(game => game.status === 'coming-soon');
+  return getListedGames().filter(game => game.status === 'coming-soon');
+};
+
+export const getFeaturedGame = (): Game => {
+  const listed = getListedGames();
+  return listed.find(game => game.featured) ?? listed[0];
+};
+
+/** All listed games for the grid (featured games appear here too). */
+export const getGridGames = (): Game[] => {
+  return getListedGames();
 };

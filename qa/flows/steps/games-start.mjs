@@ -1,8 +1,18 @@
 const GAMES = {
+  "gta-praha": {
+    name: "GTA Praha",
+    src: "https://gtapraha.online/",
+    leaderboard: true,
+    leaderboardHeading: "GTA Praha Leaderboard",
+    // Hub leaderboard may be empty; only wait for the panel, not a score row.
+    requireScore: false,
+  },
   marooned: {
     name: "Marooned",
     src: "https://marooned-island-e8bc6f06ff39.herokuapp.com/",
     leaderboard: true,
+    leaderboardHeading: "Marooned Leaderboard",
+    requireScore: true,
   },
   "crossy-road": {
     name: "Crossy Road",
@@ -20,7 +30,7 @@ async function gamesStart({ page, url, node }) {
   // Answer game-host requests here so the browser never calls a dyno.
   await page.route("**/*", async (route) => {
     const target = route.request().url();
-    if (/herokuapp\.com|playful\.smarlify\.co/i.test(target)) {
+    if (/herokuapp\.com|playful\.smarlify\.co|gtapraha\.online/i.test(target)) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       await route.fulfill({
         status: 200,
@@ -52,9 +62,12 @@ async function gamesStart({ page, url, node }) {
   if (!game.leaderboard) return;
 
   await page.getByRole("button", { name: "Leaderboard" }).click();
-  await page.getByRole("heading", { name: "Marooned Leaderboard" }).waitFor({ timeout: 10000 });
+  await page.getByRole("heading", { name: game.leaderboardHeading }).waitFor({ timeout: 10000 });
+  await page.waitForFunction(() => !document.body.innerText.includes("Loading leaderboard"), null, { timeout: 30000 });
+
+  if (!game.requireScore) return;
+
   await page.waitForFunction(() => {
-    if (document.body.innerText.includes("Loading leaderboard")) return false;
     return [...document.querySelectorAll(".font-bold")].some((el) => /^(?:\d+d(?: \d+h)?|\d+h)$/.test(el.innerText.trim()));
   }, null, { timeout: 30000 });
 }

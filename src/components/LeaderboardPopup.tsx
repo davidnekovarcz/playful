@@ -96,13 +96,15 @@ export default function LeaderboardPopup({
               {gameName === 'Space Shooter' ? `Level ${level}` : 
                gameName === 'Crossy Road' ? `Score: ${score}` :
                gameName === 'Traffic Run' ? `Laps: ${score}` :
-               gameName === 'Marooned' ? formatSurvivedMinutes(score) : score}
+               gameName === 'Marooned' ? formatSurvivedMinutes(score) :
+               gameName === 'GTA Praha' ? `Score: ${score}` : score}
             </div>
             <p className="text-sm text-muted-foreground mt-1">
               {gameName === 'Space Shooter' ? 'Asteroids destroyed!' :
                gameName === 'Crossy Road' ? 'Rows crossed!' :
                gameName === 'Traffic Run' ? 'Laps completed!' :
-               gameName === 'Marooned' ? 'Time survived' : 'Great score!'}
+               gameName === 'Marooned' ? 'Time survived' :
+               gameName === 'GTA Praha' ? 'City exploration!' : 'Great score!'}
             </p>
           </div>
 

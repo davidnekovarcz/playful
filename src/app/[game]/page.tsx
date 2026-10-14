@@ -20,25 +20,28 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
     };
   }
 
+  const isListed = game.listed !== false;
   const gameUrl = `https://playful.smarlify.co/${game.id}`;
   const fullTitle = `${game.name} - Play Online | Playful by Smarlify`;
 
   return {
     title: fullTitle,
     description: `${game.description} Play ${game.name} for free in your browser. Built with ${game.tech.join(', ')}.`,
-    keywords: [
-      game.name,
-      ...game.tech,
-      'web game',
-      'browser game',
-      'online game',
-      'free game',
-      'Smarlify',
-      'Playful',
-      'play online',
-      'gaming hub',
-      ...game.features
-    ],
+    keywords: isListed
+      ? [
+          game.name,
+          ...game.tech,
+          'web game',
+          'browser game',
+          'online game',
+          'free game',
+          'Smarlify',
+          'Playful',
+          'play online',
+          'gaming hub',
+          ...game.features
+        ]
+      : undefined,
     authors: [{ name: "Smarlify", url: "https://github.com/smarlify" }],
     creator: "Smarlify",
     publisher: "Smarlify",
@@ -46,37 +49,41 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
     alternates: {
       canonical: gameUrl,
     },
-    openGraph: {
-      title: fullTitle,
-      description: `${game.description} Play ${game.name} for free in your browser.`,
-      type: 'website',
-      url: gameUrl,
-      siteName: 'Playful by Smarlify',
-      locale: 'en_US',
-      images: [
-        {
-          url: game.thumbnail,
-          width: 1200,
-          height: 630,
-          alt: `${game.name} - Play Online | Playful by Smarlify`,
-          type: 'image/png',
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      site: '@smarlify',
-      creator: '@smarlify',
-      title: fullTitle,
-      description: `${game.description} Play ${game.name} for free in your browser.`,
-      images: [game.thumbnail],
-    },
+    openGraph: isListed
+      ? {
+          title: fullTitle,
+          description: `${game.description} Play ${game.name} for free in your browser.`,
+          type: 'website',
+          url: gameUrl,
+          siteName: 'Playful by Smarlify',
+          locale: 'en_US',
+          images: [
+            {
+              url: game.thumbnail,
+              width: 1200,
+              height: 630,
+              alt: `${game.name} - Play Online | Playful by Smarlify`,
+              type: 'image/png',
+            },
+          ],
+        }
+      : undefined,
+    twitter: isListed
+      ? {
+          card: 'summary_large_image',
+          site: '@smarlify',
+          creator: '@smarlify',
+          title: fullTitle,
+          description: `${game.description} Play ${game.name} for free in your browser.`,
+          images: [game.thumbnail],
+        }
+      : undefined,
     robots: {
-      index: true,
-      follow: true,
+      index: isListed,
+      follow: isListed,
       googleBot: {
-        index: true,
-        follow: true,
+        index: isListed,
+        follow: isListed,
         'max-video-preview': -1,
         'max-image-preview': 'large',
         'max-snippet': -1,
