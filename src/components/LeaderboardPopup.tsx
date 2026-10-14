@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Trophy, Star, Mail, User } from 'lucide-react';
 import { formatSurvivedMinutes } from '@/lib/survivedTime';
 import { formatGtaDistance } from '@/lib/gtaDistance';
-import { googleDisplayName, isGoogleUser, signInWithGoogle } from '@/lib/googleAuth';
+import { googleAccount, googleDisplayName, isGoogleUser, signInWithGoogle } from '@/lib/googleAuth';
 
 interface LeaderboardPopupProps {
   isOpen: boolean;
@@ -67,22 +67,15 @@ export default function LeaderboardPopup({
   const [error, setError] = useState('');
   const [showGuest, setShowGuest] = useState(false);
   const [signedInName, setSignedInName] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      setName('');
-      setEmail('');
-      setError('');
-      setShowGuest(false);
-      setSignedInName(isGoogleUser() ? googleDisplayName() : null);
-    }
-  }, [isOpen]);
+  const [saveSucceeded, setSaveSucceeded] = useState(false);
+  const autoSavedRef = useRef(false);
 
   const submitScore = async (data: { name: string; email?: string; uid?: string }) => {
     setIsSubmitting(true);
     setError('');
     try {
       await onSubmit(data);
+      setSaveSucceeded(true);
       onClose();
     } catch (err) {
       setError('Failed to submit score. Please try again.');
@@ -91,6 +84,32 @@ export default function LeaderboardPopup({
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      autoSavedRef.current = false;
+      return;
+    }
+
+    setName('');
+    setEmail('');
+    setError('');
+    setShowGuest(false);
+    setSaveSucceeded(false);
+
+    const account = googleAccount();
+    if (account) {
+      setSignedInName(account.name);
+      if (!autoSavedRef.current) {
+        autoSavedRef.current = true;
+        void submitScore(account);
+      }
+    } else {
+      setSignedInName(isGoogleUser() ? googleDisplayName() : null);
+    }
+    // Auto-save once per open when already signed in; submitScore closes on success.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally keyed on isOpen only
+  }, [isOpen]);
 
   const handleGoogle = async () => {
     setIsSubmitting(true);
@@ -112,6 +131,12 @@ export default function LeaderboardPopup({
     }
   };
 
+  const handleSaveSignedIn = async () => {
+    const account = googleAccount();
+    if (!account) return;
+    await submitScore(account);
+  };
+
   const handleGuestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
@@ -125,6 +150,11 @@ export default function LeaderboardPopup({
   };
 
   if (!isOpen) return null;
+
+  // Gate on live auth so the Google/guest chooser never flashes for a signed-in user.
+  const account = googleAccount();
+  const alreadySignedIn = !!account;
+  const displayName = account?.name || signedInName;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
@@ -161,77 +191,93 @@ export default function LeaderboardPopup({
             </p>
           </div>
 
-          {signedInName && (
-            <p className="mb-4 text-sm text-muted-foreground">
-              Signed in as <span className="text-foreground font-medium">{signedInName}</span>
-            </p>
-          )}
-
-          <div className="space-y-3">
-            <button
-              type="button"
-              onClick={handleGoogle}
-              disabled={isSubmitting}
-              className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-            >
-              {isSubmitting ? 'Saving…' : 'Continue with Google'}
-            </button>
-
-            {!showGuest && (
-              <button
-                type="button"
-                onClick={() => setShowGuest(true)}
-                disabled={isSubmitting}
-                className="w-full px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Save as guest instead
-              </button>
-            )}
-          </div>
-
-          {showGuest && (
-            <form onSubmit={handleGuestSubmit} className="space-y-4 mt-6 pt-4 border-t border-border">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
-                  <User className="w-4 h-4 inline mr-2" />
-                  Guest name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  required
+          {alreadySignedIn ? (
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Signed in as <span className="text-foreground font-medium">{displayName}</span>
+              </p>
+              {saveSucceeded ? (
+                <p className="text-sm text-primary font-medium">Score saved.</p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleSaveSignedIn}
                   disabled={isSubmitting}
-                />
+                  className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                >
+                  {isSubmitting ? 'Saving…' : 'Save score'}
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={handleGoogle}
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                >
+                  {isSubmitting ? 'Saving…' : 'Continue with Google'}
+                </button>
+
+                {!showGuest && (
+                  <button
+                    type="button"
+                    onClick={() => setShowGuest(true)}
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Save as guest instead
+                  </button>
+                )}
               </div>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                  <Mail className="w-4 h-4 inline mr-2" />
-                  Email (Optional)
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
-                  className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                  disabled={isSubmitting}
-                />
-              </div>
+              {showGuest && (
+                <form onSubmit={handleGuestSubmit} className="space-y-4 mt-6 pt-4 border-t border-border">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
+                      <User className="w-4 h-4 inline mr-2" />
+                      Guest name *
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Enter your name"
+                      className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting || !name.trim()}
-                className="w-full px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit as guest'}
-              </button>
-            </form>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
+                      <Mail className="w-4 h-4 inline mr-2" />
+                      Email (Optional)
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="w-full px-3 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || !name.trim()}
+                    className="w-full px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit as guest'}
+                  </button>
+                </form>
+              )}
+            </>
           )}
 
           {error && (
@@ -251,9 +297,11 @@ export default function LeaderboardPopup({
             </button>
           </div>
 
-          <p className="text-xs text-muted-foreground mt-4 text-center">
-            Continue with Google uses your Google display name on the leaderboard.
-          </p>
+          {!alreadySignedIn && (
+            <p className="text-xs text-muted-foreground mt-4 text-center">
+              Continue with Google uses your Google display name on the leaderboard.
+            </p>
+          )}
         </div>
       </div>
     </div>

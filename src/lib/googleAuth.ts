@@ -20,3 +20,17 @@ export function googleDisplayName(user = auth.currentUser): string | null {
   if (!user || !isGoogleUser(user)) return null;
   return user.displayName || user.email?.split('@')[0] || null;
 }
+
+/** Identity for a non-anonymous signed-in user, ready for leaderboard submit. */
+export function googleAccount(user = auth.currentUser): {
+  name: string;
+  email?: string;
+  uid: string;
+} | null {
+  if (!user || !isGoogleUser(user)) return null;
+  return {
+    name: googleDisplayName(user) || 'Player',
+    email: user.email || undefined,
+    uid: user.uid,
+  };
+}
