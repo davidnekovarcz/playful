@@ -450,7 +450,7 @@ export default function Home() {
                 <a 
                   href="https://lovable.dev?via=david-nekovar&utm_source=playful&utm_medium=referral&utm_campaign=footer"
             target="_blank"
-            rel="noopener noreferrer"
+            rel="sponsored noopener noreferrer"
                   className="flex items-center gap-1 text-gray-200 hover:text-pink-500 transition-colors duration-300 group"
           >
                   <img src="/lovable-logo.svg" alt="Lovable" className="w-4 h-4 brightness-0 invert group-hover:scale-110 transition-transform duration-300" />
@@ -461,7 +461,7 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <span>Fine-tuned with</span>
         <a
-                  href="https://cursor.sh?utm_source=playful&utm_medium=referral&utm_campaign=footer"
+                  href="https://cursor.com?utm_source=playful&utm_medium=referral&utm_campaign=footer"
           target="_blank"
           rel="noopener noreferrer"
                   className="flex items-center gap-1 text-gray-200 hover:text-pink-500 transition-colors duration-300 group"
@@ -474,7 +474,7 @@ export default function Home() {
               <div className="flex items-center gap-2">
                 <span>Powered by</span>
                 <a 
-                  href="https://heroku.com?utm_source=playful&utm_medium=referral&utm_campaign=footer"
+                  href="https://www.heroku.com?utm_source=playful&utm_medium=referral&utm_campaign=footer"
           target="_blank"
           rel="noopener noreferrer"
                   className="flex items-center gap-1 text-gray-200 hover:text-pink-500 transition-colors duration-300 group"
