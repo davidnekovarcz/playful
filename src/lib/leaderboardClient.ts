@@ -26,6 +26,7 @@ export interface LeaderboardEntry {
   createdAt?: Timestamp | Date;
 }
 
+/** Reads smarlify-api `leaderboards/{gameId}/scores`, including rows from 2025-11-12 onward. */
 export async function getTopScores(gameId: GameId, topN = 10): Promise<LeaderboardEntry[]> {
   const firestore = getDb();
   const col = collection(firestore, 'leaderboards', gameId, 'scores');

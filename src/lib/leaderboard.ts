@@ -21,6 +21,7 @@ import {
   Timestamp,
 } from 'firebase/firestore';
 import { getCrossDomainUserId } from './firebase';
+import { buildScoreWrite } from './leaderboardGames';
 
 export interface LeaderboardEntry {
   id?: string;
@@ -79,18 +80,9 @@ export async function isPersonalRecord(
 }
 
 /**
- * Nested game ids that write to leaderboards/{gameId}/scores (same path Crossy/Traffic use).
- * Firestore rules allow creates there; the legacy flat `leaderboard` and `userProfiles`
- * collections are permission-denied for client writes.
- */
-function nestedLeaderboardGameId(gameName: string): 'marooned' | 'gta-praha' | null {
-  if (gameName === 'Marooned') return 'marooned';
-  if (gameName === 'GTA Praha') return 'gta-praha';
-  return null;
-}
-
-/**
- * Submit a score to the leaderboard
+ * Submit a score to leaderboards/{gameId}/scores in the Smarlify API project.
+ * Crossy Road, Traffic Run, GTA Praha, and Marooned share that store with the
+ * scores recorded since 2025-11-12. The flat `leaderboard` collection is denied.
  */
 export async function submitToLeaderboard(
   gameName: string,
@@ -106,36 +98,27 @@ export async function submitToLeaderboard(
       throw new Error('No cross-domain user ID available');
     }
 
-    const nestedGameId = nestedLeaderboardGameId(gameName);
+    const write = buildScoreWrite({
+      gameName,
+      score,
+      name,
+      email,
+      uid,
+      level,
+    });
+    const [root, gameId, leaf] = write.collectionPath;
+    const payload: Record<string, unknown> = {
+      name: write.data.name,
+      score: write.data.score,
+      gameName: write.data.gameName,
+      createdAt: Timestamp.fromDate(write.data.createdAt),
+    };
+    if (write.data.email) payload.email = write.data.email;
+    if (write.data.uid) payload.uid = write.data.uid;
+    if (write.data.level !== undefined) payload.level = write.data.level;
 
-    // Card badge and in-game panel read leaderboards/{gameId}/scores.
-    // Prefer this path: live rules allow it (verified for gta-praha / marooned / crossy-road).
-    if (nestedGameId) {
-      const nested: Record<string, unknown> = {
-        name,
-        score,
-        gameName,
-        createdAt: Timestamp.now(),
-      };
-      if (email) nested.email = email;
-      if (uid) nested.uid = uid;
-      await addDoc(collection(db, 'leaderboards', nestedGameId, 'scores'), nested);
-      console.log('Score submitted to leaderboards/%s/scores:', nestedGameId, nested);
-    } else {
-      // Legacy flat collection — omit undefined (Firestore rejects them).
-      const leaderboardEntry: Record<string, unknown> = {
-        name,
-        score,
-        gameName,
-        timestamp: serverTimestamp(),
-        crossDomainUserId,
-        isPersonalRecord: true,
-      };
-      if (email) leaderboardEntry.email = email;
-      if (level !== undefined) leaderboardEntry.level = level;
-      await setDoc(doc(collection(db, 'leaderboard')), leaderboardEntry);
-      console.log('Score submitted to leaderboard:', leaderboardEntry);
-    }
+    await addDoc(collection(db, root, gameId, leaf), payload);
+    console.log('Score submitted to leaderboards/%s/scores:', gameId, payload);
 
     // Best-effort: rules currently deny client writes to personalRecords.
     await updatePersonalRecord(gameName, score, level);
