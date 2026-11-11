@@ -4,9 +4,9 @@ export const games: Game[] = [
   {
     id: 'gta-praha',
     name: 'GTA Praha',
-    description: 'Cruise Prague streets on scooter or by car in this open-world city sandbox. Weave through traffic, explore the centre, and drive the low-poly capital at your own pace.',
-    shortDescription: 'Open-world Prague city sandbox',
-    thumbnail: '/game-assets/gta-praha.png',
+    description: 'GTA Praha. Drive, walk and explore a playable Prague — Early Access, free in the browser.',
+    shortDescription: 'Drive, walk and explore a playable Prague',
+    thumbnail: '/game-assets/gta-praha-og.jpg',
     url: 'https://gtapraha.online/',
     githubUrl: 'https://github.com/smarlify/gta-prague',
     status: 'early-access',
