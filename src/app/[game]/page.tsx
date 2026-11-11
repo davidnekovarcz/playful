@@ -62,8 +62,13 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
               url: game.thumbnail,
               width: 1200,
               height: 630,
-              alt: `${game.name} - Play Online | Playful by Smarlify`,
-              type: 'image/png',
+              alt:
+                game.id === 'gta-praha'
+                  ? 'GTA Praha welcome view over Petřín in Prague'
+                  : `${game.name} - Play Online | Playful by Smarlify`,
+              type: game.thumbnail.endsWith('.jpg') || game.thumbnail.endsWith('.jpeg')
+                ? 'image/jpeg'
+                : 'image/png',
             },
           ],
         }
