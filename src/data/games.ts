@@ -24,7 +24,7 @@ export const games: Game[] = [
     shortDescription: 'Early Access island survivor with a shared-island multiplayer experience',
     thumbnail: '/game-assets/marooned.png',
     url: 'https://marooned-island-e8bc6f06ff39.herokuapp.com/',
-    githubUrl: 'https://github.com/davidnekovarcz/marooned',
+    githubUrl: 'https://github.com/smarlify/marooned?utm_source=playful.smarlify.co&utm_medium=external&utm_campaign=dave',
     status: 'early-access',
     tech: ['Three.js', 'Vue', 'TypeScript', 'Firebase'],
     features: ['Survival Simulator', 'Shared Island', 'Multiplayer'],
