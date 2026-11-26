@@ -8,7 +8,7 @@ export const games: Game[] = [
     shortDescription: 'Drive, walk and explore a playable Prague',
     thumbnail: '/game-assets/gta-praha-og.jpg',
     url: 'https://gtapraha.online/',
-    githubUrl: 'https://github.com/smarlify/gta-prague',
+    // Repo is private. The hub links the Facebook fan page instead of GitHub.
     status: 'early-access',
     tech: ['Three.js', 'TypeScript', 'WebGL', '3D'],
     features: ['Real-Life City Simulator', 'Open-World', 'Multiplayer'],
@@ -24,7 +24,7 @@ export const games: Game[] = [
     shortDescription: 'Early Access island survivor with a shared-island multiplayer experience',
     thumbnail: '/game-assets/marooned.png',
     url: 'https://marooned-island-e8bc6f06ff39.herokuapp.com/',
-    githubUrl: 'https://github.com/smarlify/marooned?utm_source=playful.smarlify.co&utm_medium=external&utm_campaign=dave',
+    // Repo is private. The hub shows a disabled Contribute control with no URL.
     status: 'early-access',
     tech: ['Three.js', 'Vue', 'TypeScript', 'Firebase'],
     features: ['Survival Simulator', 'Shared Island', 'Multiplayer'],
