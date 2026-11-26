@@ -8,7 +8,7 @@ export const games: Game[] = [
     shortDescription: 'Drive, walk and explore a playable Prague',
     thumbnail: '/game-assets/gta-praha-og.jpg',
     url: 'https://gtapraha.online/',
-    // Repo is private. The hub shows a disabled Contribute control with no URL.
+    // Repo is private. The hub links the Facebook fan page instead of GitHub.
     status: 'early-access',
     tech: ['Three.js', 'TypeScript', 'WebGL', '3D'],
     features: ['Real-Life City Simulator', 'Open-World', 'Multiplayer'],
