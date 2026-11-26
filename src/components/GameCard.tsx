@@ -1,9 +1,10 @@
 'use client';
 
 import { Game } from '@/types';
-import { Gamepad2, Clock, Zap, Github, Star } from 'lucide-react';
+import { Gamepad2, Clock, Zap, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import '@/lib/firebase'; // Initialize Firebase first
+import { createGithubContributeElement, githubControlFor } from '@/lib/githubControl';
 import { getTopScores, type GameId } from '@/lib/leaderboardClient';
 import { fetchMaroonedRecord } from '@/lib/maroonedRecord';
 import { formatSurvivedMinutes } from '@/lib/survivedTime';
@@ -235,7 +236,7 @@ export default function GameCard({ game, onClick }: GameCardProps) {
               Coming Soon
             </button>
           ) : (
-            <div className={game.githubUrl ? 'grid md:grid-cols-2 grid-cols-1 gap-5' : 'grid grid-cols-1'}>
+            <div className={githubControlFor(game).kind !== 'hidden' ? 'grid md:grid-cols-2 grid-cols-1 gap-5' : 'grid grid-cols-1'}>
               <button
                 className="text-white md:p-4 p-3 rounded-lg font-semibold text-sm cursor-pointer bg-gray-500/20 border-none inline-flex items-center justify-center transition-all duration-300 hover:scale-105"
                 style={{
@@ -257,33 +258,16 @@ export default function GameCard({ game, onClick }: GameCardProps) {
                         <Gamepad2 className="w-3 h-3 inline mr-1" />
                         Play {game.name}
               </button>
-              {game.githubUrl && (
-                <a
-                  href={game.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white md:p-4 p-3 rounded-lg font-semibold text-sm cursor-pointer border-none inline-flex items-center justify-center transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: 'linear-gradient(135deg, hsl(0 0% 20%), hsl(0 0% 15%))',
-                    boxShadow: '0 10px 25px -5px hsl(0 0% 20% / 0.25)'
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Track GitHub link click event
-                    if (typeof window !== 'undefined' && window.trackEvent) {
-                      window.trackEvent('github_link_click', {
-                        game_id: game.id,
-                        game_name: game.name,
-                        github_url: game.githubUrl,
-                        event_category: 'external_link'
-                      });
-                    }
-                  }}
-                >
-                  <Github className="w-3 h-3 inline mr-1" />
-                  Contribute on GitHub
-                </a>
-              )}
+              {createGithubContributeElement(game, () => {
+                if (typeof window !== 'undefined' && window.trackEvent && game.githubUrl) {
+                  window.trackEvent('github_link_click', {
+                    game_id: game.id,
+                    game_name: game.name,
+                    github_url: game.githubUrl,
+                    event_category: 'external_link'
+                  });
+                }
+              })}
             </div>
           )}
         </div>
